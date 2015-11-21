@@ -18,7 +18,7 @@
         token_secret: keys.tumblr_ts
     });
     var statusText = require('./statustext.json');
-    var cleverbot = require('cleverbot.io');
+    var cleverbot = require('cleverbot');
     var bot = new cleverbot(keys.cbuser, keys.cbapi);
     bot.setNick("botfriend");
 
