@@ -299,7 +299,7 @@
 
                 case 'boop': // allows the user to boop a target
                     if (textArgs.length < 2) {
-                        channel.send(userName + " wants to boop someone, but didn't specify a target! They boop themself.");
+                        channel.send(userName + " wants to boop someone, but didn't specify a target! They boop themselves.");
                     } else {
                         channel.send(userName + " gently touches " + text.substring(5, text.length + 1) + "'s nose. Boop!");
                     }
