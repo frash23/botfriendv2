@@ -13,7 +13,7 @@ This is a chat bot for the Slack chat solution. Maintained by techniponi
 
 ### Usage ###
 
-Use `npm install slack-client request googleapis shelljs imgur tumblr.js` in the project directory to install dependencies, then `./run.sh` to start the bot.
+Use `npm install slack-client request googleapis shelljs imgur tumblr.js` in the project directory to install dependencies, then `./run.sh` to start the bot. If the `login.json` file is not present, all API integrations will be nonfunctional and the bot may crash.
 
 ### run.sh ###
 
