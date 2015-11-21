@@ -18,6 +18,9 @@
         token_secret: keys.tumblr_ts
     });
     var statusText = require('./statustext.json');
+    var cleverbot = require('cleverbot.io');
+    var bot = new cleverbot(keys.cbuser, keys.cbapi);
+    bot.setNick("botfriend");
 
     var usedAnimeImgs = [];
     var lennyfaces = [
@@ -266,6 +269,7 @@
                     helpString += "- anime\n";
                     helpString += "- boop <target>\n";
                     helpString += "- botupdate\n";
+                    helpString += "- cb <message>\n";
                     helpString += "- dan <search query>\n";
                     helpString += "- e6 <search query>\n";
                     helpString += "- derpi <search query>\n";
@@ -317,6 +321,14 @@
                 case 'cameron':
                     channel.send('god dammit cameron');
                     break; */
+
+                case 'cb':
+                    if(textArgs.length < 2){
+                        channel.send("Error: no message given.");
+                    }else{
+                        bot.create(function(err, session){ bot.ask(text.substring(3, text.length + 1), function(err, response){ channel.send(response); }); });
+                    }
+                    break;
 
                 case 'dan': // searches danbooru for given tags
                     if (channel.name !== 'nsfw') {
