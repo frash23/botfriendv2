@@ -231,7 +231,7 @@
 
     // update bot code via git pull
     var updateGit = function(channel) {
-        if (exec('git pull https://techniponi@bitbucket.org/techniponi/botfriend.git').code !== 0) {
+        if (exec('git pull https://github.com/techniponi/botfriend.git').code !== 0) {
             return 'Uh oh! Something went wrong with the update.';
         } else {
             return 'I\'ve updated my code.';
