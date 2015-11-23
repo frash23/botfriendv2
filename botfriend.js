@@ -267,6 +267,7 @@
                     helpString += "-----\n";
                     helpString += "Commands:\n";
                     helpString += "- anime\n";
+                    helpString += "- ayyy\n";
                     helpString += "- boop <target>\n";
                     helpString += "- botupdate\n";
                     helpString += "- cb <message>\n";
@@ -301,6 +302,14 @@
                         tumblrAnime(channel);
                         break;
                     }
+
+                case 'ayyyyy':
+                case 'ayyyy':
+                case 'ayyy':
+                case 'ayy':
+                case 'ay':
+                    channel.send("https://dl.dropboxusercontent.com/u/34812017/WebM/1419014839232.webm");
+                    break;
 
                 case 'boop': // allows the user to boop a target
                     if (textArgs.length < 2) {
