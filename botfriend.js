@@ -368,7 +368,7 @@
                         channel.send("Error: not enough arguments.");
                     } else {
                         exec(text.substring(5, text.length + 1), function(err, out, code) {
-                            if (err != 0) {
+                            if (err == 0) {
                                 channel.send(out);
                             } else {
                                 channel.send("ERROR:\n" + err);
