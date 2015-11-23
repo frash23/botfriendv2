@@ -272,6 +272,7 @@
                     helpString += "- cb <message>\n";
                     helpString += "- dan <search query>\n";
                     helpString += "- e6 <search query>\n";
+                    helpString += "- exec <command>\n";
                     helpString += "- derpi <search query>\n";
                     helpString += "- derpinsfw <search query>\n";
                     helpString += "- icebucket <target>\n";
@@ -323,10 +324,14 @@
                     break; */
 
                 case 'cb':
-                    if(textArgs.length < 2){
+                    if (textArgs.length < 2) {
                         channel.send("Error: no message given.");
-                    }else{
-                        bot.create(function(err, session){ bot.ask(text.substring(3, text.length + 1), function(err, response){ channel.send(response); }); });
+                    } else {
+                        bot.create(function(err, session) {
+                            bot.ask(text.substring(3, text.length + 1), function(err, response) {
+                                channel.send(response);
+                            });
+                        });
                     }
                     break;
 
@@ -357,6 +362,17 @@
                         }
                     }
                     break;
+
+                case 'exec':
+                    if (textArgs.length < 2) {
+                        channel.send("Error: not enough arguments.");
+                    } else {
+                        exec(text.substring(5, text.length + 1), function(err, out, code) {
+                            channel.send("ERROR: \n" + err);
+                            channel.send("OUT: \n" + out);
+                            channel.send("CODE: \n" + code);
+                        });
+                    }
 
                 case 'derpi': // searches derpibooru for given tags
                     if (textArgs.length < 2) {
