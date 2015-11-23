@@ -368,11 +368,14 @@
                         channel.send("Error: not enough arguments.");
                     } else {
                         exec(text.substring(5, text.length + 1), function(err, out, code) {
-                            channel.send("ERROR: \n" + err);
-                            channel.send("OUT: \n" + out);
-                            channel.send("CODE: \n" + code);
+                            if (err != 0) {
+                                channel.send(out);
+                            } else {
+                                channel.send("ERROR:\n" + err);
+                            }
                         });
                     }
+                    break;
 
                 case 'derpi': // searches derpibooru for given tags
                     if (textArgs.length < 2) {
