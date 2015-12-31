@@ -1,4 +1,17 @@
 (function () {
+    
+    // These are the default values for which API integrations are enabled.
+    var enabledAPIs = {
+        google: true,
+        tumblr: true,
+        imgur: true,
+        cleverbot: true
+    }
+    
+    // for administrative commands
+    // TODO: allow for several admins
+    var chatAdmin = "techniponi";
+
     var Slack, autoMark, autoReconnect, slack, token;
     Slack = require('slack-client');
     var google = require('googleapis');
@@ -285,6 +298,7 @@
                     helpString += "- poop\n";
                     helpString += "- punch <target>\n";
                     helpString += "- roulette\n";
+                    helpString += "- api <api> [true|false]\n"
                     helpString += "- status\n";
                     helpString += "- unpunch <target>\n";
                     helpString += "- yt <search query>\n";
@@ -296,13 +310,45 @@
 
                 case 'ranimu':
                 case 'anime':
-                    if (randomRange(0, 100) == 42) {
-                        channel.send("jacob go outside or something");
-                        break;
+                    if (enabledAPIs.tumblr) {
+                        if (randomRange(0, 100) == 42) {
+                            channel.send("jacob go outside or something");
+                            break;
+                        } else {
+                            tumblrAnime(channel);
+                            break;
+                        }
                     } else {
-                        tumblrAnime(channel);
+                        channel.send("Error: tumblr API not enabled");
                         break;
                     }
+
+                case 'api':
+                    if (textArgs.length == 2) {
+                        if (enabledAPIs[textArgs[1].toLowerCase()] != undefined) {
+                            channel.send("API '" + textArgs[1].toLowerCase() + "' is ")
+                        } else {
+                            channel.send("Error: API '" + textArgs[1].toLowerCase() + "' doesn't exist.");
+                        }
+                    } else if (textArgs.length > 2) {
+                        if(user.name == chatAdmin){
+                        if (textArgs[2].toLowerCase() != "true" && textArgs[2].toLowerCase() != "false") {
+                            channel.send("Error: invalid argument. Correct usage: `setapi <api> [true|false]`");
+                        } else {
+                            if (textArgs[2].toLowerCase() == "true") {
+                                enabledAPIs[textArgs[1].toLowerCase()] = true;
+                            } else {
+                                enabledAPIs[textArgs[1].toLowerCase()] = false;
+                            }
+                            channel.send("API '" + textArgs[1].toLowerCase() + "' is now set to '" + textArgs[2].toLowerCase() + "'.");
+                        }
+                        }else{
+                            channel.send("Error: you are not an administrator!");
+                        }
+                    } else {
+                        channel.send("Error: not enough arguments");
+                    }
+                    break;
 
                 case 'ayyyyy':
                 case 'ayyyy':
@@ -334,14 +380,18 @@
                 break; */
 
                 case 'cb':
-                    if (textArgs.length < 2) {
-                        channel.send("Error: no message given.");
-                    } else {
-                        bot.create(function (err, session) {
-                            bot.ask(text.substring(3, text.length + 1), function (err, response) {
-                                channel.send(response);
+                    if (enabledAPIs.cleverbot) {
+                        if (textArgs.length < 2) {
+                            channel.send("Error: no message given.");
+                        } else {
+                            bot.create(function (err, session) {
+                                bot.ask(text.substring(3, text.length + 1), function (err, response) {
+                                    channel.send(response);
+                                });
                             });
-                        });
+                        }
+                    } else {
+                        channel.send("Error: cleverbot API not enabled");
                     }
                     break;
 
@@ -377,7 +427,7 @@
                     if (textArgs.length < 2) {
                         channel.send("Error: not enough arguments.");
                     } else {
-                        if (user.name == "techniponi") {
+                        if (user.name == chatAdmin) {
                             exec(text.substring(5, text.length + 1), function (err, out, code) {
                                 if (err == 0) {
                                     channel.send(out);
@@ -386,7 +436,7 @@
                                 }
                             });
                         } else {
-                            channel.send("Nice try.");
+                            channel.send("Error: you are not an administrator!");
                         }
                     }
                     break;
@@ -423,27 +473,35 @@
 
                 case 'imgsearch':
                 case 'imagesearch': // Posts first result from Google Images
-                    var SEARCH = text.substring(12, text.length + 1);
-                    console.log("Searching Google Images for \"" + SEARCH + "\"");
-                    customsearch.cse.list({
-                        cx: CX,
-                        q: SEARCH,
-                        auth: API_KEY,
-                        searchType: 'image'
-                    }, function (err, resp) {
-                        if (err) {
-                            console.log('An error occured', err);
-                            return;
-                        }
-                        var imgResult = randomRange(0, 9);
-                        if (resp.items && resp.items.length > 0) {
-                            channel.send(resp.items[imgResult].link); // post to channel
-                        }
-                    });
+                    if (enabledAPIs.google) {
+                        var SEARCH = text.substring(12, text.length + 1);
+                        console.log("Searching Google Images for \"" + SEARCH + "\"");
+                        customsearch.cse.list({
+                            cx: CX,
+                            q: SEARCH,
+                            auth: API_KEY,
+                            searchType: 'image'
+                        }, function (err, resp) {
+                            if (err) {
+                                console.log('An error occured', err);
+                                return;
+                            }
+                            var imgResult = randomRange(0, 9);
+                            if (resp.items && resp.items.length > 0) {
+                                channel.send(resp.items[imgResult].link); // post to channel
+                            }
+                        });
+                    } else {
+                        channel.send("Error: google API not enabled");
+                    }
                     break;
 
                 case 'lenny':
-                    postImage(channel, lennyfaces[randomRange(0, lennyfaces.length - 1)]);
+                    if (enabledAPIs.imgur) {
+                        postImage(channel, lennyfaces[randomRange(0, lennyfaces.length - 1)]);
+                    } else {
+                        channel.send("Error: imgur API not enabled");
+                    }
                     break;
 
                 case 'rofl':
@@ -506,14 +564,18 @@
                     break;
 
                 case 'yt': // posts the first youtube result with given query
-                    request('https://www.googleapis.com/youtube/v3/search?part=snippet&q=' + text.substring(3, text.length).replace(' ', '+') + '&key=' + API_KEY, function (error, response, body) {
-                        var results = JSON.parse(body).items;
-                        var chosenResult = 0;
-                        while (results[chosenResult].id.kind != 'youtube#video') {
-                            chosenResult++;
-                        }
-                        channel.send('https://www.youtube.com/watch?v=' + results[chosenResult].id.videoId);
-                    });
+                    if (enabledAPIs.google) {
+                        request('https://www.googleapis.com/youtube/v3/search?part=snippet&q=' + text.substring(3, text.length).replace(' ', '+') + '&key=' + API_KEY, function (error, response, body) {
+                            var results = JSON.parse(body).items;
+                            var chosenResult = 0;
+                            while (results[chosenResult].id.kind != 'youtube#video') {
+                                chosenResult++;
+                            }
+                            channel.send('https://www.youtube.com/watch?v=' + results[chosenResult].id.videoId);
+                        });
+                    } else {
+                        channel.send("Error: google API not enabled");
+                    }
                     break;
             }
         } else {
