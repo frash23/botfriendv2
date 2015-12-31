@@ -492,7 +492,7 @@
                     var randUser = "@" + randomUser(channel).name;
                     channel.send("The bottle points to <" + randUser + ">.");
                     break;
-                    
+
                 case 'status':
                     generateStatus(channel);
                     break;
