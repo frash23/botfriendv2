@@ -1,4 +1,4 @@
-(function() {
+(function () {
     var Slack, autoMark, autoReconnect, slack, token;
     Slack = require('slack-client');
     var google = require('googleapis');
@@ -43,12 +43,12 @@
     slack = new Slack(token, autoReconnect, autoMark);
 
     // Execute on connect to Slack
-    slack.on('open', function() {
+    slack.on('open', function () {
         var channel, channels, group, groups, id, messages, unreads;
         channels = [];
         groups = [];
         unreads = slack.getUnreadCount();
-        channels = (function() {
+        channels = (function () {
             var ref, results;
             ref = slack.channels;
             results = [];
@@ -60,23 +60,6 @@
 
                     /* :c
                     if (channel.name === "off-topic") {
-                        var generateStatus = function(channel) {
-                            var statusType = randomRange(1, 3); // [min, max)
-
-                            var usedName = statusText.names[randomRange(0, statusText.names.length - 1)];
-                            var finalStatus = "Error making status message.";
-
-                            if (statusType === 1) { // postname text
-                                var usedSText = statusText.postname[randomRange(0, statusText.postname.length - 1)];
-                                finalStatus = usedName + usedSText;
-                            } else { // prename text
-                                var usedSText = statusText.prename[randomRange(0, statusText.prename.length - 1)];
-                                finalStatus = usedSText + usedName + ".";
-                            }
-
-                            channel.send(finalStatus);
-                        }
-
                         if (!cuteimgActive) {
                             setInterval(postImage(channel, 'https://i.imgur.com/ypuqzgh.png'), 43200000);
                             cuteimgActive = true;
@@ -92,7 +75,7 @@
             }
             return results;
         })();
-        groups = (function() {
+        groups = (function () {
             var ref, results;
             ref = slack.groups;
             results = [];
@@ -115,7 +98,7 @@
      *   GENERAL USAGE AND COMMAND FUNCTIONS
      */
 
-    Array.prototype.contains = function(k) {
+    Array.prototype.contains = function (k) {
         for (p in this) {
             if (this[p] === k) return true;
             return false;
@@ -123,13 +106,13 @@
     }
 
     // gets image from derpibooru with given tags, posts to given channel
-    var derpi = function(term, channel, sfw) {
+    var derpi = function (term, channel, sfw) {
         if (sfw) {
             var searchString = term.replace(' ', '+') + ',safe';
         } else {
             var searchString = term.replace(' ', '+') + ',explicit';
         }
-        request('http://derpibooru.org/search.json?q=' + searchString + '&key=' + keys.derpi, function(err, res, body) {
+        request('http://derpibooru.org/search.json?q=' + searchString + '&key=' + keys.derpi, function (err, res, body) {
             var imgJson = JSON.parse(body);
             var imgNum = randomRange(0, imgJson.search.length - 1);
             if (imgJson.search.length == 0) {
@@ -143,8 +126,8 @@
         });
     }
 
-    var e621 = function(term, channel) {
-        request('http://e621.net/post/index.json?tags=' + term, function(err, res, body) {
+    var e621 = function (term, channel) {
+        request('http://e621.net/post/index.json?tags=' + term, function (err, res, body) {
             var imgJson = JSON.parse(body);
             var imgNum = randomRange(0, imgJson.length - 1);
             if (imgJson.length == 0) {
@@ -158,8 +141,8 @@
         });
     }
 
-    var danbooru = function(term, channel) {
-        request('http://danbooru.donmai.us/posts.json?tags=' + term, function(err, res, body) {
+    var danbooru = function (term, channel) {
+        request('http://danbooru.donmai.us/posts.json?tags=' + term, function (err, res, body) {
             var imgJson = JSON.parse(body);
             var imgNum = randomRange(0, imgJson.length - 1);
             if (imgJson.length == 0) {
@@ -171,17 +154,34 @@
                 channel.send("http://danbooru.donmai.us" + imgJson[imgNum].file_url);
             }
         });
+    }
+
+    var generateStatus = function (channel) {
+        var statusType = randomRange(1, 3); // [min, max)
+
+        var usedName = statusText.names[randomRange(0, statusText.names.length - 1)];
+        var finalStatus = "Error making status message.";
+
+        if (statusType === 1) { // postname text
+            var usedSText = statusText.postname[randomRange(0, statusText.postname.length - 1)];
+            finalStatus = usedName + usedSText;
+        } else { // prename text
+            var usedSText = statusText.prename[randomRange(0, statusText.prename.length - 1)];
+            finalStatus = usedSText + usedName + ".";
+        }
+
+        channel.send(finalStatus);
     }
 
     // returns random int within range
     // [min, max)
-    var randomRange = function(min, max) {
+    var randomRange = function (min, max) {
         return Math.floor(Math.random() * (max - min + 1) + min);
     }
 
-    var mlfw = function(term, channel) {
+    var mlfw = function (term, channel) {
         var qterm = "\"" + term + "\"";
-        request('http://mylittlefacewhen.com/api/v2/face/?search=[' + qterm + ']&limit=10&format=json', function(error, response, body) {
+        request('http://mylittlefacewhen.com/api/v2/face/?search=[' + qterm + ']&limit=10&format=json', function (error, response, body) {
             var imgJson = JSON.parse(body);
             var faceNum = randomRange(0, imgJson.meta.limit - 1);
             if (imgJson.meta.total_count == 0) {
@@ -196,27 +196,27 @@
     };
 
     // posts given image to imgur and links in given channel
-    var postImage = function(channel, img) {
+    var postImage = function (channel, img) {
         imgur.uploadUrl(img)
-            .then(function(json) {
+            .then(function (json) {
                 channel.send(json.data.link);
             })
-            .catch(function(err) {
+            .catch(function (err) {
                 channel.send(err.message);
             });
     };
 
-    var randomUser = function(channel) {
+    var randomUser = function (channel) {
         var members = channel.members;
         var selectedMember = randomRange(0, members.length - 1);
         return slack.getUserByID(members[selectedMember]);
     };
 
-    var tumblrAnime = function(chan) {
+    var tumblrAnime = function (chan) {
         tumblr.dashboard({
             limit: 25,
             type: 'photo'
-        }, function(err, data) {
+        }, function (err, data) {
             var posts = data.posts;
             var imgs = [];
             for (var i = 0, l = posts.length; i < l; i++) imgs.push(posts[i].photos[0].original_size.url);
@@ -233,7 +233,7 @@
     }
 
     // update bot code via git pull
-    var updateGit = function(channel) {
+    var updateGit = function (channel) {
         if (exec('git pull https://github.com/techniponi/botfriend.git').code !== 0) {
             return 'Uh oh! Something went wrong with the update.';
         } else {
@@ -245,7 +245,7 @@
      *   MESSAGE HANDLER
      */
 
-    slack.on('message', function(message) {
+    slack.on('message', function (message) {
         var channel, channelError, channelName, errors, response, text, textError, ts, type, typeError, user, userName;
         channel = slack.getChannelGroupOrDMByID(message.channel);
         user = slack.getUserByID(message.user);
@@ -285,6 +285,7 @@
                     helpString += "- poop\n";
                     helpString += "- punch <target>\n";
                     helpString += "- roulette\n";
+                    helpString += "- status";
                     helpString += "- unpunch <target>\n";
                     helpString += "- yt <search query>\n";
                     helpString += "-----\n";
@@ -325,19 +326,19 @@
                     process.exit(1);
                     break;
 
-                    /* case 'cam':
-                case 'cam!':
-                case 'cameron!':
-                case 'cameron':
-                    channel.send('god dammit cameron');
-                    break; */
+                /* case 'cam':
+            case 'cam!':
+            case 'cameron!':
+            case 'cameron':
+                channel.send('god dammit cameron');
+                break; */
 
                 case 'cb':
                     if (textArgs.length < 2) {
                         channel.send("Error: no message given.");
                     } else {
-                        bot.create(function(err, session) {
-                            bot.ask(text.substring(3, text.length + 1), function(err, response) {
+                        bot.create(function (err, session) {
+                            bot.ask(text.substring(3, text.length + 1), function (err, response) {
                                 channel.send(response);
                             });
                         });
@@ -377,7 +378,7 @@
                         channel.send("Error: not enough arguments.");
                     } else {
                         if (user.name == "techniponi") {
-                            exec(text.substring(5, text.length + 1), function(err, out, code) {
+                            exec(text.substring(5, text.length + 1), function (err, out, code) {
                                 if (err == 0) {
                                     channel.send(out);
                                 } else {
@@ -429,7 +430,7 @@
                         q: SEARCH,
                         auth: API_KEY,
                         searchType: 'image'
-                    }, function(err, resp) {
+                    }, function (err, resp) {
                         if (err) {
                             console.log('An error occured', err);
                             return;
@@ -491,6 +492,10 @@
                     var randUser = "@" + randomUser(channel).name;
                     channel.send("The bottle points to <" + randUser + ">.");
                     break;
+                    
+                case 'status':
+                    generateStatus(channel);
+                    break;
 
                 case 'unpunch': // reverses time to undo a user's punch
                     if (textArgs.length < 2) {
@@ -501,7 +506,7 @@
                     break;
 
                 case 'yt': // posts the first youtube result with given query
-                    request('https://www.googleapis.com/youtube/v3/search?part=snippet&q=' + text.substring(3, text.length).replace(' ', '+') + '&key=' + API_KEY, function(error, response, body) {
+                    request('https://www.googleapis.com/youtube/v3/search?part=snippet&q=' + text.substring(3, text.length).replace(' ', '+') + '&key=' + API_KEY, function (error, response, body) {
                         var results = JSON.parse(body).items;
                         var chosenResult = 0;
                         while (results[chosenResult].id.kind != 'youtube#video') {
@@ -515,14 +520,14 @@
             typeError = type !== 'message' ? "unexpected type " + type + "." : null;
             textError = text == null ? 'text was undefined.' : null;
             channelError = channel == null ? 'channel was undefined.' : null;
-            errors = [typeError, textError, channelError].filter(function(element) {
+            errors = [typeError, textError, channelError].filter(function (element) {
                 return element !== null;
             }).join(' ');
             return console.log("@" + slack.self.name + " could not respond. " + errors);
         }
     });
 
-    slack.on('error', function(error) {
+    slack.on('error', function (error) {
         return console.error("Error: " + error);
     });
 
