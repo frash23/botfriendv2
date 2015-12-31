@@ -326,7 +326,7 @@
                 case 'api':
                     if (textArgs.length == 2) {
                         if (enabledAPIs[textArgs[1].toLowerCase()] != undefined) {
-                            channel.send("API '" + textArgs[1].toLowerCase() + "' is ")
+                            channel.send("API '" + textArgs[1].toLowerCase() + "' is '"+enabledAPIs[textArgs[1].toLowerCase()]);
                         } else {
                             channel.send("Error: API '" + textArgs[1].toLowerCase() + "' doesn't exist.");
                         }
