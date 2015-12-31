@@ -285,7 +285,7 @@
                     helpString += "- poop\n";
                     helpString += "- punch <target>\n";
                     helpString += "- roulette\n";
-                    helpString += "- status";
+                    helpString += "- status\n";
                     helpString += "- unpunch <target>\n";
                     helpString += "- yt <search query>\n";
                     helpString += "-----\n";
