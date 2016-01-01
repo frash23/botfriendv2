@@ -1,0 +1,12 @@
+{
+	"botname": "botfriend",
+	
+	"apigoogle": true,
+	"apitumblr": true,
+	"apiimgur": true,
+	"apicleverbot": true,
+	
+	"admins": [
+		"techniponi", "frash23"
+	]
+}
