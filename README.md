@@ -1,6 +1,6 @@
 # README #
 
-This is a chat bot for the Slack chat solution. Maintained by techniponi
+This is a chat bot for the Slack chat software, focused on providing an entertaining supplement to a group of friends with various API integrations and humorous commands.
 
 ### Dependencies ###
 
