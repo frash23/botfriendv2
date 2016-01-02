@@ -387,7 +387,9 @@
 							channel.send("Error: no message given.");
 						} else {
 							bot.create(function (err, session) {
+								console.log("Asking Cleverbot...");
 								bot.ask(text.substring(3, text.length + 1), function (err, response) {
+									console.log("Received response:\n" + response);
 									channel.send(response);
 								});
 							});
