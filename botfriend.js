@@ -300,7 +300,7 @@
 						+ "- api <api> [true|false]\n"
 						+ "- status\n"
 						+ "- unpunch <target>\n"
-						+ "- xkcd <number>\n"
+						+ "- xkcd [number]\n"
 						+ "- yt <search query>\n"
 						+ "-----\n"
 						+ "Any ideas or suggestions? Tell @techniponi!\n"
