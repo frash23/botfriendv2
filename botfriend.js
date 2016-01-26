@@ -569,18 +569,32 @@
 						channel.send(userName + " turns back time to reverse his act of aggression against " + text.substring(8, text.length + 1) + ".");
 					}
 					break;
-					
+
 				case 'xkcd':
-					if(textArgs.length < 2){
-						channel.send("Error: no query given.");
-					}else if(isNaN(textArgs[1])){
-						channel.send("Error: query is not a valid number.");
-					}else{
-						request("http://xkcd.com/" + textArgs[1] + "/info.0.json", function(error, response, body){
+					if (textArgs.length < 2) {
+						request("http://xkcd.com/info.0.json", function (error, response, body) {
 							var results = JSON.parse(body);
-							if(results.img != undefined && results.img != null){
+							if (results.num != null && results.num != undefined) {
+								request("http://xkcd.com/" + randomRange(1, results.num + 1) + "/info.0.json", function (error, response, body) {
+									var results = JSON.parse(body);
+									if (results.img != undefined && results.img != null) {
+										channel.send(results.img);
+									} else {
+										channel.send("Error: comic does not exist with this number.");
+									}
+								});
+							} else {
+								channel.send("Unknown error");
+							}
+						});
+					} else if (isNaN(textArgs[1])) {
+						channel.send("Error: query is not a valid number.");
+					} else {
+						request("http://xkcd.com/" + textArgs[1] + "/info.0.json", function (error, response, body) {
+							var results = JSON.parse(body);
+							if (results.img != undefined && results.img != null) {
 								channel.send(results.img);
-							}else{
+							} else {
 								channel.send("Error: comic does not exist with this number.");
 							}
 						});
