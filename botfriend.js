@@ -300,6 +300,7 @@
 						+ "- api <api> [true|false]\n"
 						+ "- status\n"
 						+ "- unpunch <target>\n"
+						+ "- xkcd <number>\n"
 						+ "- yt <search query>\n"
 						+ "-----\n"
 						+ "Any ideas or suggestions? Tell @techniponi!\n"
@@ -566,6 +567,23 @@
 						channel.send(userName + " did not specify a target. " + userName + " is now a snail for the next seven and a half minutes.");
 					} else {
 						channel.send(userName + " turns back time to reverse his act of aggression against " + text.substring(8, text.length + 1) + ".");
+					}
+					break;
+					
+				case 'xkcd':
+					if(textArgs.length < 2){
+						channel.send("Error: no query given.");
+					}else if(isNaN(textArgs[1])){
+						channel.send("Error: query is not a valid number.");
+					}else{
+						request("http://xkcd.com/" + textArgs[1] + "/info.0.json", function(error, response, body){
+							var results = JSON.parse(body);
+							if(results.img != undefined && results.img != null){
+								channel.send(results.img);
+							}else{
+								channel.send("Error: comic does not exist with this number.");
+							}
+						});
 					}
 					break;
 
