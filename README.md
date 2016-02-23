@@ -18,6 +18,8 @@ Use `npm install slack-client request googleapis shelljs imgur tumblr.js cleverb
 
 EVEN IF YOU DO NOT UTILIZE THE API INTEGRATION DEPENDENCIES, YOU MUST STILL HAVE THE MODULES INSTALLED.
 
+The bot will automatically shut down after 30 minutes of operation, so make sure to run it in a loop.
+
 ### config.json ###
 
 Config file containing various defaults.

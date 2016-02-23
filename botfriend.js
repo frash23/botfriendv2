@@ -256,6 +256,7 @@
 
 
 	// Message parsing
+	setTimeout(function(){process.exit(0);}, 1800000)
 	slack.on('message', function (message) {
 		var channel, channelError, channelName, errors, response, text, textError, ts, type, typeError, user, userName;
 		channel = slack.getChannelGroupOrDMByID(message.channel);
@@ -273,7 +274,7 @@
 				
 				// Lists all available commands
 				case 'bothelp':
-					var helpString = ""
+					var helpString = ".\n"
 						+ "================\n"
 						+ "BOT FRIEND HELP:\n"
 						+ "-----\n"
