@@ -282,7 +282,7 @@
 						+ "-----\n"
 						+ "Commands:\n"
 						+ "- anime\n"
-						+ "- ayyy\n"
+						+ "- ay\n"
 						+ "- boop <target>\n"
 						+ "- botupdate\n"
 						+ "- cb <message>\n"
@@ -365,6 +365,7 @@
 					channel.send("https://dl.dropboxusercontent.com/u/34812017/WebM/1419014839232.webm");
 					break;
 					
+				// fucking diana smh
 				case 'eyyyyy':
 				case 'eyyyy':
 				case 'eyyy':
@@ -516,6 +517,10 @@
 						channel.send("Error: google API not enabled");
 					}
 					break;
+					
+				case 'kek':
+					channel.send("https://www.youtube.com/watch?v=z8RkR4rd7dM");
+					break;
 
 				case 'lenny':
 					if (enabledAPIs.imgur) {
@@ -533,16 +538,6 @@
 				case 'lol':
 					channel.send('roflmao lol lmao ololololol :D XDDDDD that\'s fucking hilarious');
 					break;
-					
-				case 'kek':
-					channel.send("https://www.youtube.com/watch?v=z8RkR4rd7dM");
-					break;
-					
-				case 'wow':
-					channel.send("https://www.youtube.com/watch?v=Wfl_AaYTdFQ");
-					break;
-					
-					
 
 				case 'mlfw': // searches mlfw with given tag
 					if (textArgs.length < 2) {
@@ -563,10 +558,6 @@
 
 				case 'pls': // cam pls
 					channel.send('pls');
-					break;
-					
-				case 'weeb': // you really are
-					channel.send('@frash23 and @tehatomicpotato are weebs');
 					break;
 
 				case 'poop': // you sick fuck
@@ -596,6 +587,14 @@
 
 				case 'status':
 					generateStatus(channel);
+					break;
+					
+				case 'weeb': // you really are
+					channel.send('@frash23 and @tehatomicpotato are weebs');
+					break;
+					
+				case 'wow':
+					channel.send("https://www.youtube.com/watch?v=Wfl_AaYTdFQ");
 					break;
 
 				case 'xkcd':
