@@ -662,7 +662,7 @@
 							channel.send('https://www.youtube.com/watch?v=' + results[chosenResult].id.videoId);
 						});
 					} else {
-						channel.send("Error: google API not enabled");
+						channel.send("Error: youtube API not enabled");
 					}
 					break;
 			}
