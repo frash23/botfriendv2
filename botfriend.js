@@ -396,8 +396,8 @@
 					break;
 					
 				case 'cam'://pay attention
-					for(int i=0; i<=5; i++){
-					channel.send("@techniponi");
+					for(var i=0; i<=5; i++){
+						channel.send("@techniponi");
 					}
 					break;
 					
