@@ -2,6 +2,8 @@
 	
 	// Please confirm these files are present before running!
 	
+	//drew was here 3/2/16
+	
 	// Load json configs
 	var config = require('./config.json');
 	var statusText = require('./statustext.json');
@@ -312,6 +314,7 @@
 				// If tumblr API integration is enabled, posts random image from Tumblr dasboard
 				case 'ranimu':
 				case 'anime':
+				case 'I am a huge fucking weeb':
 					if (enabledAPIs.tumblr) {
 						if (randomRange(0, 100) == 42) {
 							channel.send("jacob go outside or something");
@@ -361,6 +364,15 @@
 				case 'ay':
 					channel.send("https://dl.dropboxusercontent.com/u/34812017/WebM/1419014839232.webm");
 					break;
+					
+				case 'eyyyyy':
+				case 'eyyyy':
+				case 'eyyy':
+				case 'eyy':
+				case 'ey':
+					channel.send("You're doing it wrong, Diana");
+					break;
+					
 
 				// Performs a 'boop' action to the given target.
 				case 'boop':
@@ -480,6 +492,7 @@
 					break;
 
 				case 'imgsearch':
+				case 'imgsrch':
 				case 'imagesearch': // Posts first result from Google Images
 					if (enabledAPIs.google) {
 						var SEARCH = text.substring(12, text.length + 1);
@@ -520,6 +533,16 @@
 				case 'lol':
 					channel.send('roflmao lol lmao ololololol :D XDDDDD that\'s fucking hilarious');
 					break;
+					
+				case 'kek':
+					channel.send("https://www.youtube.com/watch?v=z8RkR4rd7dM");
+					break;
+					
+				case 'wow':
+					channel.send("https://www.youtube.com/watch?v=Wfl_AaYTdFQ");
+					break;
+					
+					
 
 				case 'mlfw': // searches mlfw with given tag
 					if (textArgs.length < 2) {
@@ -541,6 +564,10 @@
 				case 'pls': // cam pls
 					channel.send('pls');
 					break;
+					
+				case 'weeb': // you really are
+					channel.send('Jacob and Andrew are weebs');
+					break;
 
 				case 'poop': // you sick fuck
 					channel.send('Ha ha. Poop. That is some real mature, adult humor.');
@@ -553,6 +580,14 @@
 						channel.send(userName + " violently slugs " + text.substring(6, text.length + 1) + ".");
 					}
 					break;
+					
+				case 'unpunch': // reverses time to undo a user's punch
+					if (textArgs.length < 2) {
+						channel.send(userName + " did not specify a target. " + userName + " is now a snail for the next seven and a half minutes.");
+					} else {
+						channel.send(userName + " turns back time to reverse his act of aggression against " + text.substring(8, text.length + 1) + ".");
+					}
+					break;
 
 				case 'roulette': // picks a random user
 					var randUser = "@" + randomUser(channel).name;
@@ -561,14 +596,6 @@
 
 				case 'status':
 					generateStatus(channel);
-					break;
-
-				case 'unpunch': // reverses time to undo a user's punch
-					if (textArgs.length < 2) {
-						channel.send(userName + " did not specify a target. " + userName + " is now a snail for the next seven and a half minutes.");
-					} else {
-						channel.send(userName + " turns back time to reverse his act of aggression against " + text.substring(8, text.length + 1) + ".");
-					}
 					break;
 
 				case 'xkcd':
