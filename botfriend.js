@@ -401,6 +401,14 @@
 					}
 					break;
 					
+				case 'CRAWLING'://CRAWWWWWWLING
+					channel.send("https://www.youtube.com/watch?v=uOVdNpdhSiQ");
+					break;
+				
+				case 'crawl':
+					channel.send("https://www.youtube.com/watch?v=l9dEZ0hRlF4");
+					break;
+					
 				// If cleverbot API is enabled, sends the given message to Cleverbot and posts the response.
 				case 'cb':
 					if (enabledAPIs.cleverbot) {
@@ -593,6 +601,10 @@
 
 				case 'status':
 					generateStatus(channel);
+					break;
+					
+				case 'thebest':
+					channel.send("https://www.youtube.com/watch?v=5vRlJrkxsqo");
 					break;
 					
 				case 'weeb': // you really are
