@@ -394,7 +394,13 @@
 						"Error: you are not an administrator!";
 					}
 					break;
-
+					
+				case 'cam'://pay attention
+					for(int i=0; i<=5; i++){
+					channel.send("@techniponi");
+					}
+					break;
+					
 				// If cleverbot API is enabled, sends the given message to Cleverbot and posts the response.
 				case 'cb':
 					if (enabledAPIs.cleverbot) {
