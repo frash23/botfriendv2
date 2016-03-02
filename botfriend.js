@@ -401,7 +401,7 @@
 					}
 					break;
 					
-				case 'CRAWLING'://CRAWWWWWWLING
+				case 'crawling'://CRAWWWWWWLING
 					channel.send("https://www.youtube.com/watch?v=uOVdNpdhSiQ");
 					break;
 				
