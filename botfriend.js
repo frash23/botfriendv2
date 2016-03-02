@@ -24,7 +24,7 @@
 		tumblr: config.apitumblr,
 		imgur: config.apiimgur,
 		cleverbot: config.apicleverbot,
-		yt: config.yt
+		yt: config.apiyt
 	}
 
 	var chatAdmins = config.admins;
