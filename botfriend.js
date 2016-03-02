@@ -23,7 +23,8 @@
 		google: config.apigoogle,
 		tumblr: config.apitumblr,
 		imgur: config.apiimgur,
-		cleverbot: config.apicleverbot
+		cleverbot: config.apicleverbot,
+		yt: config.yt
 	}
 
 	var chatAdmins = config.admins;
@@ -314,7 +315,7 @@
 				// If tumblr API integration is enabled, posts random image from Tumblr dasboard
 				case 'ranimu':
 				case 'anime':
-				case 'I am a huge fucking weeb':
+				case 'catgirls':
 					if (enabledAPIs.tumblr) {
 						if (randomRange(0, 100) == 42) {
 							channel.send("jacob go outside or something");
@@ -339,7 +340,7 @@
 					} else if (textArgs.length > 2) {
 						if (chatAdmins.indexOf(user.name) > -1) {
 							if (textArgs[2].toLowerCase() != "true" && textArgs[2].toLowerCase() != "false") {
-								channel.send("Error: invalid argument. Correct usage: `setapi <api> [true|false]`");
+								channel.send("Error: invalid argument. Correct usage: `api <api> [true|false]`");
 							} else {
 								if (textArgs[2].toLowerCase() == "true") {
 									enabledAPIs[textArgs[1].toLowerCase()] = true;
@@ -441,6 +442,28 @@
 						}
 					}
 					break;
+					
+				case 'derpi': // searches derpibooru for given tags
+					if (textArgs.length < 2) {
+						channel.send(userName + ' did not specify a search term.');
+					} else {
+						var SEARCH = text.substring(6, text.length + 1);
+						derpi(SEARCH, channel, true);
+					}
+					break;
+
+				case 'derpinsfw': // searches derpibooru for given tags (nsfw version)
+					if (channel.name !== 'nsfw') {
+						channel.send('Perhaps you are in the wrong channel?');
+					} else {
+						if (textArgs.length < 2) {
+							channel.send(userName + ' did not specify a search term.');
+						} else {
+							var SEARCH = text.substring(10, text.length + 1);
+							derpi(SEARCH, channel, false);
+						}
+					}
+					break;
 
 				// Searches e621 for the given tags and posts to the channel. Only works in the 'nsfw' channel.
 				case 'e6':
@@ -474,27 +497,9 @@
 						}
 					}
 					break;
-
-				case 'derpi': // searches derpibooru for given tags
-					if (textArgs.length < 2) {
-						channel.send(userName + ' did not specify a search term.');
-					} else {
-						var SEARCH = text.substring(6, text.length + 1);
-						derpi(SEARCH, channel, true);
-					}
-					break;
-
-				case 'derpinsfw': // searches derpibooru for given tags (nsfw version)
-					if (channel.name !== 'nsfw') {
-						channel.send('Perhaps you are in the wrong channel?');
-					} else {
-						if (textArgs.length < 2) {
-							channel.send(userName + ' did not specify a search term.');
-						} else {
-							var SEARCH = text.substring(10, text.length + 1);
-							derpi(SEARCH, channel, false);
-						}
-					}
+					
+				case 'fug':
+					channel.send("https://dl.dropboxusercontent.com/u/34812017/%21xXdankmeems_420blazitXx%21/fug.png");
 					break;
 
 				// Performs "ice bucket" emote on given target.
@@ -608,7 +613,7 @@
 					break;
 					
 				case 'weeb': // you really are
-					channel.send('@frash23 and @tehatomicpotato are weebs');
+					channel.send('jacob and andrew are weebs');
 					break;
 					
 				case 'wow':
@@ -647,7 +652,7 @@
 					break;
 
 				case 'yt': // posts the first youtube result with given query
-					if (enabledAPIs.google) {
+					if (enabledAPIs.yt) {
 						request('https://www.googleapis.com/youtube/v3/search?part=snippet&q=' + text.substring(3, text.length).replace(' ', '+') + '&key=' + API_KEY, function (error, response, body) {
 							var results = JSON.parse(body).items;
 							var chosenResult = 0;
