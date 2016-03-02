@@ -566,7 +566,7 @@
 					break;
 					
 				case 'weeb': // you really are
-					channel.send('Jacob and Andrew are weebs');
+					channel.send('@frash23 and @tehatomicpotato are weebs');
 					break;
 
 				case 'poop': // you sick fuck
