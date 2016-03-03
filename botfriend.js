@@ -689,9 +689,9 @@ slack.on('message', function (message) {
 		var textArgs = text.split(' ');
 		var cmd = textArgs[0].toLowerCase();
 		for (var wowLoopI = 0; wowLoopI < commandLibrary.length; wowLoopI++) {
-			for (var wowLoopJ = 0; wowLoopJ < commandLibrary(wowLoopI).name.length; wowLoopJ++) {
-				if (cmd == commandLibrary(wowLoopI).name(wowLoopJ)) {
-					commandLibrary(wowLoopI).func();
+			for (var wowLoopJ = 0; wowLoopJ < commandLibrary[wowLoopI].name.length; wowLoopJ++) {
+				if (cmd == commandLibrary[wowLoopI].name[wowLoopJ]) {
+					commandLibrary[wowLoopI].func();
 					return 0;
 				}
 			}
