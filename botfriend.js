@@ -262,10 +262,8 @@
 			desc: 'Displays all commands',
 			func: function () {
 				var helpString = '\n=-=-~-=-=-~-=-=\n';
-				var curWowdong;
 				for (var helpIndex = 0; helpIndex < commandLibrary.length; helpIndex++) {
-					curWowdong = helpIndex;
-					helpString += curWowdong.name[0] + ' - ' + curWowdong.desc + '\n';
+					helpString += commandLibrary[helpIndex].name[0] + ' - ' + commandLibrary[helpIndex].desc + '\n';
 				}
 				helpString += '=-=-~-=-=-~-=-=';
 				channel.send(helpString);
