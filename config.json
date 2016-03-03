@@ -5,6 +5,7 @@
 	"apitumblr": true,
 	"apiimgur": true,
 	"apicleverbot": true,
+	"apiyt": true,
 	
 	"admins": [
 		"techniponi", "frash23", "drewmiracles", "bjorn"

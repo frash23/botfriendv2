@@ -1,8 +1,9 @@
 (function () {
 	
-	// Please confirm these files are present before running!
+	//drew was here 2016-03-02
+	//Please use the standardized international date format.
 	
-	//drew was here 3/2/16
+	// Please confirm these files are present before running!
 	
 	// Load json configs
 	var config = require('./config.json');
@@ -23,7 +24,8 @@
 		google: config.apigoogle,
 		tumblr: config.apitumblr,
 		imgur: config.apiimgur,
-		cleverbot: config.apicleverbot
+		cleverbot: config.apicleverbot,
+		yt: config.apiyt
 	}
 
 	var chatAdmins = config.admins;
@@ -255,7 +257,7 @@
 			return 'I\'ve updated my code.';
 		}
 	};
-
+	
 	var commandLibrary = [
 		{
 			name: ['bothelp'],
@@ -517,7 +519,7 @@
 		},
 		{
 			name: ['lenny'],
-			desc: 'ヽ༼ຈل͜ຈ༽ﾉ',
+			desc: 'ãƒ½à¼¼àºˆÙ„Íœàºˆà¼½ï¾‰',
 			func: function () {
 				if (enabledAPIs.imgur) {
 					postImage(channel, lennyfaces[randomRange(0, lennyfaces.length - 1)]);
