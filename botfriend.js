@@ -671,45 +671,45 @@
 		}
 	];
 
-var textArgs;
-var channelError, channelName, errors, response, text, textError, ts, type, typeError, user, userName;
-// Message parsing
-setTimeout(function () { process.exit(0); }, 1800000)
-slack.on('message', function (message) {
-	channel = slack.getChannelGroupOrDMByID(message.channel);
-	user = slack.getUserByID(message.user);
-	response = '';
-	type = message.type, ts = message.ts, text = message.text;
-	channelName = (channel != null ? channel.is_channel : void 0) ? '#' : '';
-	channelName = channelName + (channel ? channel.name : 'UNKNOWN_CHANNEL');
-	userName = (user != null ? user.name : void 0) != null ? "@" + user.name : "UNKNOWN_USER";
-	console.log("Received: " + type + " " + channelName + " " + userName + " " + ts + " \"" + text + "\"");
-	if (type === 'message' && (text != null) && (channel != null)) {
-		textArgs = text.split(' ');
-		var cmd = textArgs[0].toLowerCase();
-		for (var wowLoopI = 0; wowLoopI < commandLibrary.length; wowLoopI++) {
-			for (var wowLoopJ = 0; wowLoopJ < commandLibrary[wowLoopI].name.length; wowLoopJ++) {
-				if (cmd == commandLibrary[wowLoopI].name[wowLoopJ]) {
-					commandLibrary[wowLoopI].func();
-					return 0;
+	var textArgs;
+	var channelError, channelName, errors, response, text, textError, ts, type, typeError, user, userName;
+	// Message parsing
+	setTimeout(function () { process.exit(0); }, 1800000)
+	slack.on('message', function (message) {
+		channel = slack.getChannelGroupOrDMByID(message.channel);
+		user = slack.getUserByID(message.user);
+		response = '';
+		type = message.type, ts = message.ts, text = message.text;
+		channelName = (channel != null ? channel.is_channel : void 0) ? '#' : '';
+		channelName = channelName + (channel ? channel.name : 'UNKNOWN_CHANNEL');
+		userName = (user != null ? user.name : void 0) != null ? "@" + user.name : "UNKNOWN_USER";
+		console.log("Received: " + type + " " + channelName + " " + userName + " " + ts + " \"" + text + "\"");
+		if (type === 'message' && (text != null) && (channel != null)) {
+			textArgs = text.split(' ');
+			var cmd = textArgs[0].toLowerCase();
+			for (var wowLoopI = 0; wowLoopI < commandLibrary.length; wowLoopI++) {
+				for (var wowLoopJ = 0; wowLoopJ < commandLibrary[wowLoopI].name.length; wowLoopJ++) {
+					if (cmd == commandLibrary[wowLoopI].name[wowLoopJ]) {
+						commandLibrary[wowLoopI].func();
+						return 0;
+					}
 				}
 			}
+		} else {
+			typeError = type !== 'message' ? "unexpected type " + type + "." : null;
+			textError = text == null ? 'text was undefined.' : null;
+			channelError = channel == null ? 'channel was undefined.' : null;
+			errors = [typeError, textError, channelError].filter(function (element) {
+				return element !== null;
+			}).join(' ');
+			return console.log("@" + slack.self.name + " could not respond. " + errors);
 		}
-	} else {
-		typeError = type !== 'message' ? "unexpected type " + type + "." : null;
-		textError = text == null ? 'text was undefined.' : null;
-		channelError = channel == null ? 'channel was undefined.' : null;
-		errors = [typeError, textError, channelError].filter(function (element) {
-			return element !== null;
-		}).join(' ');
-		return console.log("@" + slack.self.name + " could not respond. " + errors);
-	}
-});
+	});
 
-slack.on('error', function (error) {
-	return console.error("Error: " + error);
-});
+	slack.on('error', function (error) {
+		return console.error("Error: " + error);
+	});
 
-slack.login();
+	slack.login();
 
 }).call(this);
