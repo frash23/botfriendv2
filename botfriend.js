@@ -27,7 +27,7 @@
 	}
 
 	var chatAdmins = config.admins;
-	var autoMark, autoReconnect, slack, token;
+	var autoMark, autoReconnect, slack, token, channel;
 	var customsearch = google.customsearch('v1');
 	imgur.setClientId(keys.imgurid);
 
@@ -676,7 +676,7 @@
 // Message parsing
 setTimeout(function () { process.exit(0); }, 1800000)
 slack.on('message', function (message) {
-	var channel, channelError, channelName, errors, response, text, textError, ts, type, typeError, user, userName;
+	var channelError, channelName, errors, response, text, textError, ts, type, typeError, user, userName;
 	channel = slack.getChannelGroupOrDMByID(message.channel);
 	user = slack.getUserByID(message.user);
 	response = '';
