@@ -270,7 +270,7 @@
 			}
 		},
 		{
-			name: ['ranimu', 'anime'],
+			name: ['anime', 'ranimu'],
 			desc: 'Displays cute anime girls',
 			func: function () {
 				if (enabledAPIs.tumblr) {
@@ -671,6 +671,7 @@
 		}
 	];
 
+var textArgs;
 // Message parsing
 setTimeout(function () { process.exit(0); }, 1800000)
 slack.on('message', function (message) {
@@ -684,7 +685,7 @@ slack.on('message', function (message) {
 	userName = (user != null ? user.name : void 0) != null ? "@" + user.name : "UNKNOWN_USER";
 	console.log("Received: " + type + " " + channelName + " " + userName + " " + ts + " \"" + text + "\"");
 	if (type === 'message' && (text != null) && (channel != null)) {
-		var textArgs = text.split(' ');
+		textArgs = text.split(' ');
 		var cmd = textArgs[0].toLowerCase();
 		for (var wowLoopI = 0; wowLoopI < commandLibrary.length; wowLoopI++) {
 			for (var wowLoopJ = 0; wowLoopJ < commandLibrary[wowLoopI].name.length; wowLoopJ++) {
