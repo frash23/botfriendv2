@@ -260,7 +260,16 @@
 		{
 			name:['bothelp'],
 			desc:'Displays all commands',
-			func:function(){}
+			func:function(){
+				var helpString='=-=-~-=-=-~-=-=\n';
+				var curWowdong;
+				for(helpIndex=0;helpIndex<commandLibrary.length;helpindex++){
+					curWowdong=commandLibrary(helpIndex);
+					helpString+=curWowdong.name(0)+' - '+curWowdong.desc+'\n';
+				}
+				helpString+='=-=-~-=-=-~-=-=';
+				channel.send(helpString);
+			}
 		},
 		{
 			name:['ranimu','anime'],
