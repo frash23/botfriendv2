@@ -261,7 +261,7 @@
 			name:['bothelp'],
 			desc:'Displays all commands',
 			func:function(){
-				var helpString='=-=-~-=-=-~-=-=\n';
+				var helpString='\n=-=-~-=-=-~-=-=\n';
 				var curWowdong;
 				for(helpIndex=0;helpIndex<commandLibrary.length;helpindex++){
 					curWowdong=commandLibrary(helpIndex);
