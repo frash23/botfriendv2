@@ -249,7 +249,7 @@
 
 	// update bot code via git pull - this function will not restart the bot.
 	var updateGit = function (channel) {
-		if (exec('git pull https://github.com/techniponi/botfriend.git').code !== 0) {
+		if (exec('git pull').code !== 0) {
 			return 'Uh oh! Something went wrong with the update.';
 		} else {
 			return 'I\'ve updated my code.';
