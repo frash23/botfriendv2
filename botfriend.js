@@ -286,7 +286,7 @@
 		},
 		{
 			name: ['api'],
-			desc: 'Check the statuf of any api',
+			desc: 'Check or set APIs. Usage: `api <api> [true|false]',
 			func: function () {
 				if (textArgs.length == 2) {
 					if (enabledAPIs[textArgs[1].toLowerCase()] != undefined) {
@@ -297,7 +297,7 @@
 				} else if (textArgs.length > 2) {
 					if (chatAdmins.indexOf(user.name) > -1) {
 						if (textArgs[2].toLowerCase() != "true" && textArgs[2].toLowerCase() != "false") {
-							channel.send("Error: invalid argument. Correct usage: `setapi <api> [true|false]`");
+							channel.send("Error: invalid arguments.");
 						} else {
 							if (textArgs[2].toLowerCase() == "true") {
 								enabledAPIs[textArgs[1].toLowerCase()] = true;
@@ -330,7 +330,7 @@
 		},
 		{
 			name: ['boop'],
-			desc: 'Boops',
+			desc: 'Boops a given target.',
 			func: function () {
 				if (textArgs.length < 2) {
 					channel.send(userName + " wants to boop someone, but didn't specify a target! They boop themselves.");
@@ -354,7 +354,7 @@
 		},
 		{
 			name: ['cam', 'campls'],
-			desc: 'Annoys Cameron',
+			desc: 'Annoys Cameron.',
 			func: function () {
 				for (var i = 0; i <= 5; i++) {
 					channel.send("@techniponi pls");
@@ -384,7 +384,7 @@
 		},
 		{
 			name: ['dan'],
-			desc: 'Display an image with given tags from Danbooru',
+			desc: 'Display an image with given tags from Danbooru. `dan <tags>`',
 			func: function () {
 				if (channel.name !== 'nsfw') {
 					channel.send('Perhaps you are in the wrong channel?');
@@ -399,8 +399,8 @@
 			}
 		},
 		{
-			name: ['e6', 'e621'],
-			desc: 'Displays an image with given tags from e621',
+			name: ['e621', 'e6'],
+			desc: 'Displays an image with given tags from e621. `e6 <tags>`',
 			func: function () {
 				if (channel.name !== 'nsfw') {
 					channel.send('Perhaps you are in the wrong channel?');
@@ -416,7 +416,7 @@
 		},
 		{
 			name: ['exec'],
-			desc: 'Executes a command on the server.  Admins only!',
+			desc: 'Executes a command on the server. Admins only!',
 			func: function () {
 				if (textArgs.length < 2) {
 					channel.send("Error: not enough arguments.");
@@ -437,7 +437,7 @@
 		},
 		{
 			name: ['derpi'],
-			desc: 'Displays an image with given tags from Derpibooru',
+			desc: 'Displays an image with given tags from Derpibooru. `derpi <tags>`',
 			func: function () {
 				if (textArgs.length < 2) {
 					channel.send(userName + ' did not specify a search term.');
@@ -449,7 +449,7 @@
 		},
 		{
 			name: ['derpinsfw'],
-			desc: 'Displays a naughty image with given tags from Derpibooru',
+			desc: 'Displays a _naughty_ image with given tags from Derpibooru. `derpinsfw <tags>`',
 			func: function () {
 				if (channel.name !== 'nsfw') {
 					channel.send('Perhaps you are in the wrong channel?');
@@ -472,18 +472,18 @@
 		},
 		{
 			name: ['icebucket'],
-			desc: 'Dump ice on someone',
+			desc: 'Dump ice on someone. `icebucket <target>`',
 			func: function () {
 				if (textArgs.length < 2) {
-					channel.send(userName + " did not specify a target. " + userName + " hurt themself in their confusion!");
+					channel.send(userName + " did not specify a target. " + userName + " hurt themselves in their confusion!");
 				} else {
 					channel.send(userName + " dumps a bucket of cold ice over " + text.substring(10, text.length + 1) + ".");
 				}
 			}
 		},
 		{
-			name: ['imagesearch', 'imgsrc'],
-			desc: 'Displays an image from Google Images with given search',
+			name: ['imagesearch', 'imgsrc', 'imgsearch'],
+			desc: 'Displays an image from Google Images with given search term. `imagesearch <query>`',
 			func: function () {
 				if (enabledAPIs.google) {
 					var SEARCH = text.substring(12, text.length + 1);
@@ -510,7 +510,7 @@
 		},
 		{
 			name: ['kek'],
-			desc: 'keks',
+			desc: 'kekekekekek',
 			func: function () {
 				channel.send("https://www.youtube.com/watch?v=z8RkR4rd7dM");
 			}
@@ -535,7 +535,7 @@
 		},
 		{
 			name: ['mlfw'],
-			desc: 'displays an image from mylittlefacewhen with given tags',
+			desc: 'Displays an image from mylittlefacewhen with given tags. `mlfw <tags>`',
 			func: function () {
 				if (textArgs.length < 2) {
 					channel.send(userName + ' did not specify a search term.');
@@ -547,7 +547,7 @@
 		},
 		{
 			name: ['noot'],
-			desc: 'Noots',
+			desc: 'NOOT NOOT',
 			func: function () {
 				channel.send("https://www.youtube.com/watch?v=8k97_ClPi50");
 			}
@@ -570,12 +570,12 @@
 			name: ['poop'],
 			desc: '...',
 			func: function () {
-				channel.send('Ha ha. Poop. That is some real mature, adult humor.');
+				channel.send('Ha ha. Poop. That is some real mature humor.');
 			}
 		},
 		{
 			name: ['punch'],
-			desc: 'Punches a target',
+			desc: 'Punches a given target. `punch <target>`',
 			func: function () {
 				if (textArgs.length < 2) {
 					channel.send(userName + " did not specify a target. " + userName + " hurt themself in their confusion!");
@@ -586,7 +586,7 @@
 		},
 		{
 			name: ['roulette'],
-			desc: 'Spin the wheel fate!',
+			desc: 'Spin the wheel of fate!',
 			func: function () {
 				var randUser = "@" + randomUser(channel).name;
 				channel.send("The bottle points to <" + randUser + ">.");
@@ -594,14 +594,14 @@
 		},
 		{
 			name: ['status'],
-			desc: 'See what botriend thinks about the chat members',
+			desc: 'See what botriend thinks about the chat members.',
 			func: function () {
 				generateStatus(channel);
 			}
 		},
 		{
 			name: ['unpunch'],
-			desc: 'Create a time paradox.  Just for fun.',
+			desc: 'Create a time paradox. Just for fun.',
 			func: function () {
 				if (textArgs.length < 2) {
 					channel.send(userName + " did not specify a target. " + userName + " is now a snail for the next seven and a half minutes.");
@@ -619,7 +619,7 @@
 		},
 		{
 			name: ['xkcd'],
-			desc: 'posts a specific by number or random if not specified comic from xkcd',
+			desc: 'Posts either a random xkcd comic, or the given numbered comic. `xkcd [number]`',
 			func: function () {
 				if (textArgs.length < 2) {
 					request("http://xkcd.com/info.0.json", function (error, response, body) {
@@ -652,8 +652,8 @@
 			}
 		},
 		{
-			name: ['yt', 'youtube'],
-			desc: 'Displays a video from YoutUbe with the search parameters',
+			name: ['youtube', 'yt'],
+			desc: 'Displays a video from YouTube with given search parameters. `yt <query>`',
 			func: function () {
 				if (enabledAPIs.yt) {
 					request('https://www.googleapis.com/youtube/v3/search?part=snippet&q=' + text.substring(3, text.length).replace(' ', '+') + '&key=' + API_KEY, function (error, response, body) {
