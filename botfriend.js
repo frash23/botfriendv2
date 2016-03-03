@@ -672,10 +672,10 @@
 	];
 
 var textArgs;
+var channelError, channelName, errors, response, text, textError, ts, type, typeError, user, userName;
 // Message parsing
 setTimeout(function () { process.exit(0); }, 1800000)
 slack.on('message', function (message) {
-	var channelError, channelName, errors, response, text, textError, ts, type, typeError, user, userName;
 	channel = slack.getChannelGroupOrDMByID(message.channel);
 	user = slack.getUserByID(message.user);
 	response = '';
