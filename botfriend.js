@@ -1,9 +1,9 @@
 (function () {
 	
-	// Please confirm these files are present before running!
-	
 	//drew was here 2016-03-02
 	//Please use the standardized international date format.
+	
+	// Please confirm these files are present before running!
 	
 	// Load json configs
 	var config = require('./config.json');
