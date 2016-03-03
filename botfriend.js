@@ -60,7 +60,7 @@
 	token = keys.token;
 	autoReconnect = true;
 	autoMark = true;
-	slack = new Slack(token, autoReconnect, autoMark);
+	var slack = new Slack(token, autoReconnect, autoMark);
 
 	// Execute on connect to Slack
 	slack.on('open', function () {
