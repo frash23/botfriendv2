@@ -457,6 +457,13 @@
 			}
 		},
 		{
+			name:['honk'],
+			desc:'honk it up!',
+			func:function(){
+				channel.send('https://www.youtube.com/watch?v=c3vONDqvayo');
+			}
+		},
+		{
 			name:['icebucket'],
 			desc:'Dump ice on someone',
 			func:function(){
@@ -531,41 +538,129 @@
 				}
 			}
 		},
-		noot:{
-			
+		{
+			name:['noot'],
+			desc:'Noots',
+			func:funtion(){
+				channel.send("https://www.youtube.com/watch?v=8k97_ClPi50");
+			}
 		},
-		penis:{
-			
+		{
+			name:['penis'],
+			desc:'penerswow',
+			func:function(){
+				channel.send('CAMERON HAS THE LONGER DONGER');
+			}
 		},
-		pls:{
-			
+		{
+			name:['pls','please'],
+			desc:'pls',
+			func:function(){
+				channel.send('pls');
+			}
 		},
-		poop:{
-			
+		{
+			name:['poop'],
+			desc:'...',
+			func:function(){
+				channel.send('Ha ha. Poop. That is some real mature, adult humor.');
+			}
 		},
-		punch:{
-			
+		{
+			name:['punch'],
+			desc:'Punches a target',
+			func:function(){
+				if (textArgs.length < 2) {
+					channel.send(userName + " did not specify a target. " + userName + " hurt themself in their confusion!");
+				} else {
+					channel.send(userName + " violently slugs " + text.substring(6, text.length + 1) + ".");
+				}
+			}
 		},
-		roulette:{
-			
+		{
+			name:['roulette'],
+			desc:'Spin the wheel fate!',
+			func:function(){
+				var randUser = "@" + randomUser(channel).name;
+				channel.send("The bottle points to <" + randUser + ">.");
+			}
 		},
-		status:{
-			
+		{
+			name:['status'],
+			desc:'See what botriend thinks about the chat members',
+			func:function(){
+				generateStatus(channel);
+			}
 		},
-		unpunch:{
-			
+		{
+			name:['unpunch'],
+			desc:'Create a time paradox.  Just for fun.',
+			func:function(){
+				if (textArgs.length < 2) {
+					channel.send(userName + " did not specify a target. " + userName + " is now a snail for the next seven and a half minutes.");
+				} else {
+					channel.send(userName + " turns back time to reverse his act of aggression against " + text.substring(8, text.length + 1) + ".");
+				}
+			}
 		},
-		weeb:{
-			
+		{
+			name:['wow'],
+			desc:'wao',
+			func:function(){
+				channel.send("https://www.youtube.com/watch?v=Wfl_AaYTdFQ");
+			}
 		},
-		wow:{
-			
+		{
+			name:['xkcd'],
+			desc:'posts a specific by number or random if not specified comic from xkcd',
+			func:function(){
+				if (textArgs.length < 2) {
+					request("http://xkcd.com/info.0.json", function (error, response, body) {
+						var results = JSON.parse(body);
+						if (results.num != null && results.num != undefined) {
+							request("http://xkcd.com/" + randomRange(1, results.num + 1) + "/info.0.json", function (error, response, body) {
+								var results = JSON.parse(body);
+								if (results.img != undefined && results.img != null) {
+									channel.send(results.img);
+								} else {
+									channel.send("Error: comic does not exist with this number.");
+								}
+							});
+						} else {
+							channel.send("Unknown error");
+						}
+					});
+				} else if (isNaN(textArgs[1])) {
+					channel.send("Error: query is not a valid number.");
+				} else {
+					request("http://xkcd.com/" + textArgs[1] + "/info.0.json", function (error, response, body) {
+						var results = JSON.parse(body);
+						if (results.img != undefined && results.img != null) {
+							channel.send(results.img);
+						} else {
+							channel.send("Error: comic does not exist with this number.");
+						}
+					});
+				}
+			}
 		},
-		xkcd:{
-			
-		},
-		yt:{
-			
+		{
+			name:['yt','youtube'],
+			desc:'Displays a video from YoutUbe with the search parameters',
+			func:function(){
+				if (enabledAPIs.yt) {
+					request('https://www.googleapis.com/youtube/v3/search?part=snippet&q=' + text.substring(3, text.length).replace(' ', '+') + '&key=' + API_KEY, function (error, response, body) {
+						var results = JSON.parse(body).items;
+						var chosenResult = 0;
+						while (results[chosenResult].id.kind != 'youtube#video') {
+							chosenResult++;
+						}
+						channel.send('https://www.youtube.com/watch?v=' + results[chosenResult].id.videoId);
+					});
+				} else {
+					channel.send("Error: youtube API not enabled");
+				}
+			}
 		}
 	};
 
@@ -584,6 +679,16 @@
 		if (type === 'message' && (text != null) && (channel != null)) {
 			var textArgs = text.split(' ');
 			var cmd = textArgs[0].toLowerCase();
+			function(){
+				for(wowLoopI=0;wowLoopI<commandLibrary.length;wowLoopI++){
+					for(wowLoopJ=0;wowLoopJ<commandLibrary(wowLoopI).name.length;wowLoopJ++){
+						if(cmd == commandLibrary(wowLoopI).name(wowLoopJ)){
+							commandLibrary(wowLoopI).func();
+							return 0;
+						}
+					}
+				}
+			}
 			/*switch (cmd) {
 				
 				// Lists all available commands
