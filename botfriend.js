@@ -359,12 +359,13 @@
 							message: "$ kicks * in the groin!"
 						}]
 					});
-					channel.send("You enter the arena!\nSTATS: `lolplaceholder`");
+					channel.send("You enter the arena! Stats:\nHP: " + fighters[fighters.length - 1].hp + "/" + fighters[fighters.length - 1].maxhp);
 				} else if (textArgs[1] == 'attack') {
 					if (textArgs.length < 4) {
 						channel.send("Error: not enough arguments");
 					} else {
 						for (var ff = 0; ff < fighters.length - 1; ff++) {
+							console.log("Start looking for users...");
 							if (userName == fighters[ff].name) {
 								console.log("User is in battle...");
 								for (var fff = 0; fff < fighters.attacks.length - 1; fff++) {
@@ -397,7 +398,7 @@
 					}
 				} else if (textArgs[1] == 'list') {
 					var finalString = "Current contestants:\n";
-					for (var pp = 0; pp < fighters.length - 1; pp++) {
+					for (var pp = 0; pp < fighters.length; pp++) {
 						finalString += fighters[pp].name + " HP: " + fighters[pp].hp + "/" + fighters[pp].maxhp + "\n";
 					}
 					channel.send(finalString);
