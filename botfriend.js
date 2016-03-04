@@ -366,10 +366,13 @@
 					} else {
 						for (var ff = 0; ff < fighters.length - 1; ff++) {
 							if (userName == fighters[ff].name) {
+								console.log("User is in battle...");
 								for (var fff = 0; fff < fighters.attacks.length - 1; fff++) {
 									if (textArgs[2].toLowerCase() == fighters[ff].attacks[fff].name) {
+										console.log("Attack is valid...");
 										for (var ffff = 0; ffff < fighters.length - 1; ffff++) {
 											if (textArgs[3] == fighters[ffff].name) {
+												console.log("Target is valid...");
 												fighters[ffff].hp -= fighters[ff].attacks[fff].damage;
 												channel.send(fighters[ff].attacks[fff].message.replace("$", fighters[ff].name).replace("*", fighters[ffff].name) + "\n" + fighters[ffff].name + " HP: " + fighters[ffff].hp + "/" + fighters[ffff].maxhp);
 											} else {
@@ -386,11 +389,18 @@
 								}
 							} else {
 								if (ff == fighters.length - 1) {
+									console.log("User not in battle.");
 									channel.send("You aren't in battle!");
 								}
 							}
 						}
 					}
+				} else if (textArgs[1] == 'list') {
+					var finalString = "Current contestants:\n";
+					for (var pp = 0; pp < fighters.length - 1; pp++) {
+						finalString += fighters[pp].name + " HP: " + fighters[pp].hp + "/" + fighters[pp].maxhp + "\n";
+					}
+					channel.send(finalString);
 				}
 			}
 		}
