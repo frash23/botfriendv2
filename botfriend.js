@@ -369,8 +369,8 @@
 								console.log("Start looking for users...");
 								if (userName == fighters[ff].name) {
 									console.log("User is in battle...");
-									for (var fff = 0; fff < fighters.attacks.length; fff++) {
-										if (fff != fighters.attacks.length) {
+									for (var fff = 0; fff < fighters[ff].attacks.length; fff++) {
+										if (fff != fighters[ff].attacks.length) {
 											if (textArgs[2].toLowerCase() == fighters[ff].attacks[fff].name) {
 												console.log("Attack is valid...");
 												for (var ffff = 0; ffff < fighters.length - 1; ffff++) {
