@@ -364,34 +364,40 @@
 					if (textArgs.length < 4) {
 						channel.send("Error: not enough arguments");
 					} else {
-						for (var ff = 0; ff < fighters.length - 1; ff++) {
-							console.log("Start looking for users...");
-							if (userName == fighters[ff].name) {
-								console.log("User is in battle...");
-								for (var fff = 0; fff < fighters.attacks.length - 1; fff++) {
-									if (textArgs[2].toLowerCase() == fighters[ff].attacks[fff].name) {
-										console.log("Attack is valid...");
-										for (var ffff = 0; ffff < fighters.length - 1; ffff++) {
-											if (textArgs[3] == fighters[ffff].name) {
-												console.log("Target is valid...");
-												fighters[ffff].hp -= fighters[ff].attacks[fff].damage;
-												channel.send(fighters[ff].attacks[fff].message.replace("$", fighters[ff].name).replace("*", fighters[ffff].name) + "\n" + fighters[ffff].name + " HP: " + fighters[ffff].hp + "/" + fighters[ffff].maxhp);
+						for (var ff = 0; ff < fighters.length; ff++) {
+							if (ff != fighters.length) {
+								console.log("Start looking for users...");
+								if (userName == fighters[ff].name) {
+									console.log("User is in battle...");
+									for (var fff = 0; fff < fighters.attacks.length; fff++) {
+										if (fff != fighters.attacks.length) {
+											if (textArgs[2].toLowerCase() == fighters[ff].attacks[fff].name) {
+												console.log("Attack is valid...");
+												for (var ffff = 0; ffff < fighters.length - 1; ffff++) {
+													if (ffff != fighters.length) {
+														if (textArgs[3] == fighters[ffff].name) {
+															console.log("Target is valid...");
+															fighters[ffff].hp -= fighters[ff].attacks[fff].damage;
+															channel.send(fighters[ff].attacks[fff].message.replace("$", fighters[ff].name).replace("*", fighters[ffff].name) + "\n" + fighters[ffff].name + " HP: " + fighters[ffff].hp + "/" + fighters[ffff].maxhp);
+														} else {
+															if (ffff == fighters.length - 1) {
+																channel.send("Error: invalid target");
+															}
+														}
+													}
+												}
 											} else {
-												if (ffff == fighters.length - 1) {
-													channel.send("Error: invalid target");
+												if (fff == fighters.attacks.length - 1) {
+													channel.send("Error: invalid attack");
 												}
 											}
 										}
-									} else {
-										if (fff == fighters.attacks.length - 1) {
-											channel.send("Error: invalid attack");
-										}
 									}
-								}
-							} else {
-								if (ff == fighters.length - 1) {
-									console.log("User not in battle.");
-									channel.send("You aren't in battle!");
+								} else {
+									if (ff == fighters.length - 1) {
+										console.log("User not in battle.");
+										channel.send("You aren't in battle!");
+									}
 								}
 							}
 						}
