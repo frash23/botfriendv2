@@ -371,7 +371,7 @@
 									console.log("User is in battle...");
 									for (var fff = 0; fff < fighters[ff].attacks.length; fff++) {
 										if (fff != fighters[ff].attacks.length) {
-											if (textArgs[2].toLowerCase() == fighters[ff].attacks[fff].name) {
+											if (textArgs[2] == fighters[ff].attacks[fff].name) {
 												console.log("Attack is valid...");
 												for (var ffff = 0; ffff < fighters.length - 1; ffff++) {
 													if (ffff != fighters.length) {
@@ -387,7 +387,7 @@
 													}
 												}
 											} else {
-												if (fff == fighters.attacks.length - 1) {
+												if (fff == fighters[ff].attacks.length - 1) {
 													channel.send("Error: invalid attack");
 												}
 											}
