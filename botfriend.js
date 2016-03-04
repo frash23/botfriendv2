@@ -54,7 +54,7 @@
 		'http://i.imgur.com/un7uu69.png'
 	];
 
-	var fighters = [{}];
+	var fighters = [];
 
 	// google keys
 	const CX = keys.cx;
