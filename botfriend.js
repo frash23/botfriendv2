@@ -359,32 +359,33 @@
 							message: "$ kicks * in the groin!"
 						}]
 					});
+					channel.send("You enter the arena!\nSTATS: `lolplaceholder`");
 				} else if (textArgs[1] == 'attack') {
 					if (textArgs.length < 4) {
 						channel.send("Error: not enough arguments");
 					} else {
-						for (var ff = 0; ff < fighters.length; ff++) {
+						for (var ff = 0; ff < fighters.length - 1; ff++) {
 							if (userName == fighters[ff].name) {
-								for (var fff = 0; fff < fighters.attacks.length; fff++) {
-									if (textArgs[2].toLowerCase() == fighters.attacks[fff].name) {
-										for (var ffff = 0; ffff < fighters.length; ffff++) {
+								for (var fff = 0; fff < fighters.attacks.length - 1; fff++) {
+									if (textArgs[2].toLowerCase() == fighters[ff].attacks[fff].name) {
+										for (var ffff = 0; ffff < fighters.length - 1; ffff++) {
 											if (textArgs[3] == fighters[ffff].name) {
 												fighters[ffff].hp -= fighters[ff].attacks[fff].damage;
 												channel.send(fighters[ff].attacks[fff].message.replace("$", fighters[ff].name).replace("*", fighters[ffff].name) + "\n" + fighters[ffff].name + " HP: " + fighters[ffff].hp + "/" + fighters[ffff].maxhp);
 											} else {
-												if (ffff == fighters.length) {
+												if (ffff == fighters.length - 1) {
 													channel.send("Error: invalid target");
 												}
 											}
 										}
 									} else {
-										if (fff == fighters.attacks.length) {
+										if (fff == fighters.attacks.length - 1) {
 											channel.send("Error: invalid attack");
 										}
 									}
 								}
 							} else {
-								if (ff == fighters.length) {
+								if (ff == fighters.length - 1) {
 									channel.send("You aren't in battle!");
 								}
 							}
