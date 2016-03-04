@@ -364,6 +364,7 @@
 					if (textArgs.length < 4) {
 						channel.send("Error: not enough arguments");
 					} else {
+						var targetUser = "@" + slack.getUserByID(textArgs[3].replace("<@", "").replace(">", "")).name;
 						for (var ff = 0; ff < fighters.length; ff++) {
 							if (ff != fighters.length) {
 								console.log("Start looking for users...");
@@ -375,7 +376,7 @@
 												console.log("Attack is valid...");
 												for (var ffff = 0; ffff < fighters.length - 1; ffff++) {
 													if (ffff != fighters.length) {
-														if (textArgs[3] == fighters[ffff].name) {
+														if (targetUser == fighters[ffff].name) {
 															console.log("Target is valid...");
 															fighters[ffff].hp -= fighters[ff].attacks[fff].damage;
 															channel.send(fighters[ff].attacks[fff].message.replace("$", fighters[ff].name).replace("*", fighters[ffff].name) + "\n" + fighters[ffff].name + " HP: " + fighters[ffff].hp + "/" + fighters[ffff].maxhp);
