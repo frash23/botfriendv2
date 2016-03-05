@@ -415,9 +415,9 @@
 																	fighters[ffff].hp -= fighters[ff].attacks[fff].damage;
 																	channel.send(fighters[ff].attacks[fff].message.replace("$", fighters[ff].name).replace("*", fighters[ffff].name) + "\n" + fighters[ffff].name + " HP: " + fighters[ffff].hp + "/" + fighters[ffff].maxhp);
 																	fighters[ff].cooldown = true;
-																	setTimeout(function() {
+																	setTimeout(function(fighters) {
 																		fighters[ff].cooldown = false;
-																	}, fighters[ff].attacks[fff].timeout * 1000);
+																	}, fighters[ff].attacks[fff].timeout * 1000, fighters);
 																} else {
 																	channel.send("You are still on cooldown!");
 																}
