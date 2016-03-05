@@ -389,7 +389,7 @@
 					if (textArgs.length < 4) {
 						channel.send("Error: not enough arguments");
 					} else {
-						var targetUser = "@" + slack.getUserByID(textArgs[3].replace("<@", "").replace(">", "")).name;
+
 						var userCheck = false;
 						for (var ff = 0; ff < fighters.length; ff++) {
 							if (ff != fighters.length) {
@@ -406,23 +406,28 @@
 												var targetCheck = false;
 												for (var ffff = 0; ffff < fighters.length; ffff++) {
 													if (ffff != fighters.length) {
-														if (targetUser == fighters[ffff].name) {
-															targetCheck = true;
-															console.log("Target is valid...");
-															if (!fighters[ff].cooldown) {
-																fighters[ffff].hp -= fighters[ff].attacks[fff].damage;
-																channel.send(fighters[ff].attacks[fff].message.replace("$", fighters[ff].name).replace("*", fighters[ffff].name) + "\n" + fighters[ffff].name + " HP: " + fighters[ffff].hp + "/" + fighters[ffff].maxhp);
-																fighters[ff].cooldown = true;
-																setTimeout(function() {
-																	fighters[ff].cooldown = false;
-																}, fighters[ff].attacks[fff].timeout * 1000);
+														if (slack.getUserByID(textArgs[3].replace("<@", "").replace(">", "")) !== undefined) {
+															var targetUser = "@" + slack.getUserByID(textArgs[3].replace("<@", "").replace(">", "")).name;
+															if (targetUser == fighters[ffff].name) {
+																targetCheck = true;
+																console.log("Target is valid...");
+																if (!fighters[ff].cooldown) {
+																	fighters[ffff].hp -= fighters[ff].attacks[fff].damage;
+																	channel.send(fighters[ff].attacks[fff].message.replace("$", fighters[ff].name).replace("*", fighters[ffff].name) + "\n" + fighters[ffff].name + " HP: " + fighters[ffff].hp + "/" + fighters[ffff].maxhp);
+																	fighters[ff].cooldown = true;
+																	setTimeout(function() {
+																		fighters[ff].cooldown = false;
+																	}, fighters[ff].attacks[fff].timeout * 1000);
+																} else {
+																	channel.send("You are still on cooldown!");
+																}
 															} else {
-																channel.send("You are still on cooldown!");
+																if (ffff == fighters.length - 1 && !targetCheck) {
+																	channel.send("Error: invalid target");
+																}
 															}
 														} else {
-															if (ffff == fighters.length - 1 && !targetCheck) {
-																channel.send("Error: invalid target");
-															}
+															channel.send("Error: invalid target");
 														}
 													}
 												}
