@@ -348,15 +348,18 @@
 					if (textArgs.length < 3) {
 						fighters.push({
 							name: userName,
+							cooldown: false,
 							maxhp: 50,
 							hp: 50,
 							attacks: [{
 								name: "punch",
 								damage: 5,
+								timeout: 3,
 								message: "$ punches *!"
 							}, {
 								name: "kick",
 								damage: 10,
+								timeout: 5,
 								message: "$ kicks * in the groin!"
 							}]
 						});
@@ -365,15 +368,18 @@
 						var targetUser = "@" + slack.getUserByID(textArgs[2].replace("<@", "").replace(">", "")).name;
 						fighters.push({
 							name: targetUser,
+							cooldown: false,
 							maxhp: 50,
 							hp: 50,
 							attacks: [{
 								name: "punch",
 								damage: 5,
+								timeout: 3,
 								message: "$ punches *!"
 							}, {
 								name: "kick",
 								damage: 10,
+								timeout: 5,
 								message: "$ kicks * in the groin!"
 							}]
 						});
@@ -384,37 +390,51 @@
 						channel.send("Error: not enough arguments");
 					} else {
 						var targetUser = "@" + slack.getUserByID(textArgs[3].replace("<@", "").replace(">", "")).name;
+						var userCheck = false;
 						for (var ff = 0; ff < fighters.length; ff++) {
 							if (ff != fighters.length) {
 								console.log("Start looking for users...");
 								if (userName == fighters[ff].name) {
+									userCheck = true;
 									console.log("User is in battle...");
+									var attackCheck = false;
 									for (var fff = 0; fff < fighters[ff].attacks.length; fff++) {
 										if (fff != fighters[ff].attacks.length) {
 											if (textArgs[2] == fighters[ff].attacks[fff].name) {
+												attackCheck = true;
 												console.log("Attack is valid...");
+												var targetCheck = false;
 												for (var ffff = 0; ffff < fighters.length; ffff++) {
 													if (ffff != fighters.length) {
 														if (targetUser == fighters[ffff].name) {
+															targetCheck = true;
 															console.log("Target is valid...");
-															fighters[ffff].hp -= fighters[ff].attacks[fff].damage;
-															channel.send(fighters[ff].attacks[fff].message.replace("$", fighters[ff].name).replace("*", fighters[ffff].name) + "\n" + fighters[ffff].name + " HP: " + fighters[ffff].hp + "/" + fighters[ffff].maxhp);
+															if (!fighters[ff].cooldown) {
+																fighters[ffff].hp -= fighters[ff].attacks[fff].damage;
+																channel.send(fighters[ff].attacks[fff].message.replace("$", fighters[ff].name).replace("*", fighters[ffff].name) + "\n" + fighters[ffff].name + " HP: " + fighters[ffff].hp + "/" + fighters[ffff].maxhp);
+																fighters[ff].cooldown = true;
+																setTimeout(function() {
+																	fighters[ff].cooldown = false;
+																}, fighters[ff].attacks[fff].timeout * 1000);
+															} else {
+																channel.send("You are still on cooldown!");
+															}
 														} else {
-															if (ffff == fighters.length - 1) {
+															if (ffff == fighters.length - 1 && !targetCheck) {
 																channel.send("Error: invalid target");
 															}
 														}
 													}
 												}
 											} else {
-												if (fff == fighters[ff].attacks.length - 1) {
+												if (fff == fighters[ff].attacks.length - 1 && !attackCheck) {
 													channel.send("Error: invalid attack");
 												}
 											}
 										}
 									}
 								} else {
-									if (ff == fighters.length - 1) {
+									if (ff == fighters.length - 1 && !userCheck) {
 										console.log("User not in battle.");
 										channel.send("You aren't in battle!");
 									}
