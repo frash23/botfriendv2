@@ -124,6 +124,10 @@
 		return slack.getUserByID(members[selectedMember]);
 	};
 
+	var cooldownFunc = function(fighters, ff) {
+		fighters[ff].cooldown = false;
+	}
+
 	// gets image from derpibooru with given tags, posts to given channel - auto-appends "safe" or "explicit" tag based on argument
 	var derpi = function(term, channel, sfw) {
 		if (sfw) {
@@ -415,9 +419,7 @@
 																	fighters[ffff].hp -= fighters[ff].attacks[fff].damage;
 																	channel.send(fighters[ff].attacks[fff].message.replace("$", fighters[ff].name).replace("*", fighters[ffff].name) + "\n" + fighters[ffff].name + " HP: " + fighters[ffff].hp + "/" + fighters[ffff].maxhp);
 																	fighters[ff].cooldown = true;
-																	setTimeout(function(fighters) {
-																		fighters[ff].cooldown = false;
-																	}, fighters[ff].attacks[fff].timeout * 1000, fighters);
+																	setTimeout(cooldownFunc, fighters[ff].attacks[fff].timeout * 1000, fighters, ff);
 																} else {
 																	channel.send("You are still on cooldown!");
 																}
