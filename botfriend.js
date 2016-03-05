@@ -345,21 +345,40 @@
 			} else {
 				if (textArgs[1] == 'enter') {
 					// Enter user into battle
-					fighters.push({
-						name: userName,
-						maxhp: 50,
-						hp: 50,
-						attacks: [{
-							name: "punch",
-							damage: 5,
-							message: "$ punches *!"
-						}, {
-							name: "kick",
-							damage: 10,
-							message: "$ kicks * in the groin!"
-						}]
-					});
-					channel.send("You enter the arena! Stats:\nHP: " + fighters[fighters.length - 1].hp + "/" + fighters[fighters.length - 1].maxhp);
+					if (textArgs.length < 3) {
+						fighters.push({
+							name: userName,
+							maxhp: 50,
+							hp: 50,
+							attacks: [{
+								name: "punch",
+								damage: 5,
+								message: "$ punches *!"
+							}, {
+								name: "kick",
+								damage: 10,
+								message: "$ kicks * in the groin!"
+							}]
+						});
+						channel.send("You enter the arena! Stats:\nHP: " + fighters[fighters.length - 1].hp + "/" + fighters[fighters.length - 1].maxhp);
+					} else {
+						var targetUser = "@" + slack.getUserByID(textArgs[2].replace("<@", "").replace(">", "")).name;
+						fighters.push({
+							name: targetUser,
+							maxhp: 50,
+							hp: 50,
+							attacks: [{
+								name: "punch",
+								damage: 5,
+								message: "$ punches *!"
+							}, {
+								name: "kick",
+								damage: 10,
+								message: "$ kicks * in the groin!"
+							}]
+						});
+						channel.send(targetUser + " enters the arena! Stats:\nHP: " + fighters[fighters.length - 1].hp + "/" + fighters[fighters.length - 1].maxhp);
+					}
 				} else if (textArgs[1] == 'attack') {
 					if (textArgs.length < 4) {
 						channel.send("Error: not enough arguments");
@@ -374,7 +393,7 @@
 										if (fff != fighters[ff].attacks.length) {
 											if (textArgs[2] == fighters[ff].attacks[fff].name) {
 												console.log("Attack is valid...");
-												for (var ffff = 0; ffff < fighters.length - 1; ffff++) {
+												for (var ffff = 0; ffff < fighters.length; ffff++) {
 													if (ffff != fighters.length) {
 														if (targetUser == fighters[ffff].name) {
 															console.log("Target is valid...");
