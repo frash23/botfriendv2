@@ -364,7 +364,11 @@
 					if (textArgs.length < 4) {
 						channel.send("Error: not enough arguments");
 					} else {
-						var targetUser = "@" + slack.getUserByID(textArgs[3].replace("<@", "").replace(">", "")).name;
+						if (textArgs[3].indexOf("<@") >= 0) {
+							var targetUser = "@" + slack.getUserByID(textArgs[3].replace("<@", "").replace(">", "")).name;
+						} else {
+							var targetUser = "nobody";
+						}
 						for (var ff = 0; ff < fighters.length; ff++) {
 							if (ff != fighters.length) {
 								console.log("Start looking for users...");
@@ -643,6 +647,53 @@
 		func: function() {
 			var randUser = "@" + randomUser(channel).name;
 			channel.send("The bottle points to <" + randUser + ">.");
+		}
+	}, {
+		name: ['search'],
+		desc: "Searches Google with a given query. `search <query>`",
+		func: function() {
+			if (enabledAPIs.google) {
+				var SEARCH = text.substring(7, text.length + 1);
+				console.log("Searching google for \"" + SEARCH + "\"");
+				customsearch.cse.list({
+					cx: CX,
+					q: SEARCH,
+					auth: API_KEY,
+				}, function(err, resp) {
+					if (err) {
+						console.log('An error occured', err);
+						return;
+					}
+					var imgResult = randomRange(0, 9);
+					if (resp.items && resp.items.length > 0) {
+						channel.send(resp.items[imgResult].link); // post to channel
+					}
+				});
+			}
+		}
+
+	}, {
+		name: ['sc'],
+		desc: "Searches Soundcloud with a given query. `search <query>`",
+		func: function() {
+			if (enabledAPIs.google) {
+				var SEARCH = text.substring(3, text.length + 1);
+				console.log("Searching SoundCloud for \"" + SEARCH + "\"");
+				customsearch.cse.list({
+					cx: CX,
+					q: SEARCH + "site:soundcloud.com",
+					auth: API_KEY,
+				}, function(err, resp) {
+					if (err) {
+						console.log('An error occured', err);
+						return;
+					}
+					var imgResult = randomRange(0, 9);
+					if (resp.items && resp.items.length > 0) {
+						channel.send(resp.items[imgResult].link); // post to channel
+					}
+				});
+			}
 		}
 	}, {
 		name: ['status'],
