@@ -723,7 +723,7 @@
 				console.log("Searching SoundCloud for \"" + SEARCH + "\"");
 				customsearch.cse.list({
 					cx: CX,
-					q: SEARCH + "site:soundcloud.com",
+					q: SEARCH + " site:soundcloud.com",
 					auth: API_KEY,
 				}, function(err, resp) {
 					if (err) {
