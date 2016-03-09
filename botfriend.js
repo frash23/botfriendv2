@@ -279,14 +279,18 @@
 		name: ['anime', 'ranimu'],
 		desc: 'Displays cute anime girls',
 		func: function() {
-			if (enabledAPIs.tumblr) {
-				if (randomRange(0, 100) == 42) {
-					channel.send("jacob go outside or something");
+			if (channel.name !== 'shitposting') {
+				if (enabledAPIs.tumblr) {
+					if (randomRange(0, 100) == 42) {
+						channel.send("jacob go outside or something");
+					} else {
+						tumblrAnime(channel);
+					}
 				} else {
-					tumblrAnime(channel);
+					channel.send("Error: tumblr API not enabled");
 				}
 			} else {
-				channel.send("Error: tumblr API not enabled");
+				channel.send("Take it to #shitposting dammit");
 			}
 		}
 	}, {
@@ -716,7 +720,7 @@
 
 	}, {
 		name: ['sc'],
-		desc: "Searches Soundcloud with a given query. `search <query>`",
+		desc: "Searches Soundcloud with a given query. `sc <query>`",
 		func: function() {
 			if (enabledAPIs.google) {
 				var SEARCH = text.substring(3, text.length + 1);
