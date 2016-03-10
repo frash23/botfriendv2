@@ -279,7 +279,7 @@
 		name: ['anime', 'ranimu'],
 		desc: 'Displays cute anime girls',
 		func: function() {
-			if (channel.name !== 'shitposting') {
+			if (channel.name == 'shitposting') {
 				if (enabledAPIs.tumblr) {
 					if (randomRange(0, 100) == 42) {
 						channel.send("jacob go outside or something");
