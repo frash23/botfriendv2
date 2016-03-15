@@ -1,3 +1,5 @@
+"use strict";
+
 // Please confirm these files are present before running!
 
 // Load json configs
