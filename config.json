@@ -1,13 +1,7 @@
 {
 	"botname": "botfriend",
 	
-	"apigoogle": true,
-	"apitumblr": true,
-	"apiimgur": true,
-	"apicleverbot": true,
-	"apiyt": true,
-	
-	"admins": [
-		"techniponi", "frash23", "drewmiracles", "bjorn"
-	]
+	"admins": [ "techniponi", "frash23", "drewmiracles", "bjorn" ],
+
+	"work_channels": [ "work", "dev-reipples" ]
 }

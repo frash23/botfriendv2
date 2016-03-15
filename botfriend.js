@@ -20,13 +20,6 @@ var exec = require('child_process').exec;
 var chatAdmins = config.admins;
 var autoMark, autoReconnect, slack, token, channel;
 var customsearch = google.customsearch('v1');
-var enabledAPIs = {
-	google: config.apigoogle,
-	tumblr: config.apitumblr,
-	imgur: config.apiimgur,
-	cleverbot: config.apicleverbot,
-	yt: config.apiyt
-}
 
 var CX = keys.cx;		// Google API stuff
 var API_KEY = keys.api;	// Because who has time for self-explanantory variable names?
@@ -190,94 +183,54 @@ function updateGit(channel) {
 	}
 }
 
-var commandLibrary = [{
-	name: ['bothelp'],
-	desc: 'Displays all commands',
-	func: function() {
-		var helpString = '\n=-=-~-=-=-~-=-=\n';
-		for (var helpIndex = 0; helpIndex < commandLibrary.length; helpIndex++) {
-			helpString += commandLibrary[helpIndex].name[0] + ' - ' + commandLibrary[helpIndex].desc + '\n';
+var commandLibrary = {
+
+	bothelp: {
+		desc: 'Displays all commands',
+		func: function() {
+			var help = '\n=-=-~-=-=-~-=-=\n';
+			for(let key in commands) help += key + ' - ' + commands[key].desc + '\n';
+			help += '=-=-~-=-=-~-=-=';
+			channel.send(help);
 		}
-		helpString += '=-=-~-=-=-~-=-=';
-		channel.send(helpString);
-	}
-}, {
-	name: ['anime', 'ranimu'],
-	desc: 'Displays cute anime girls',
-	func: function() {
-		if (channel.name == 'shitposting') {
-			if (enabledAPIs.tumblr) {
-				if (randomRange(0, 100) == 42) {
-					channel.send("jacob go outside or something");
-				} else {
-					tumblrAnime(channel);
-				}
-			} else {
-				channel.send("Error: tumblr API not enabled");
-			}
-		} else {
-			channel.send("Take it to #shitposting dammit");
+	},
+
+	anime: {
+		desc: 'Displays cute anime girls',
+		func: function() {
+			if( config.work_channels.indexOf(channel.name) < 1 ) {
+				if (randomRange(0, 100) === 42) channel.send('jacob go outside or something');
+				else tumblrAnime(channel);
+			} else channel.send('Take it to an off-topic channel');
 		}
-	}
-}, {
-	name: ['api'],
-	desc: 'Check or set APIs. Usage: `api <api> [true|false]',
-	func: function() {
-		if (textArgs.length == 2) {
-			if (enabledAPIs[textArgs[1].toLowerCase()] != undefined) {
-				channel.send("API '" + textArgs[1].toLowerCase() + "' is '" + enabledAPIs[textArgs[1].toLowerCase()] + "'.");
+	},
+
+	boop: {
+		desc: 'Boops a given target.',
+		func: function() {
+			if(textArgs.length < 2) {
+				channel.send(userName + ' wants to boop someone, but didn\'t specify a target! They boop themselves.');
 			} else {
-				channel.send("Error: API '" + textArgs[1].toLowerCase() + "' doesn't exist.");
+				channel.send(userName + ' gently touches ' + text.substring(5, text.length + 1) + '\'s nose. Boop!');
 			}
-		} else if (textArgs.length > 2) {
+		}
+	},
+
+	botupdate: {
+		desc: 'Update my code!',
+		func: function() {
 			if (chatAdmins.indexOf(user.name) > -1) {
-				if (textArgs[2].toLowerCase() != "true" && textArgs[2].toLowerCase() != "false") {
-					channel.send("Error: invalid arguments.");
-				} else {
-					if (textArgs[2].toLowerCase() == "true") {
-						enabledAPIs[textArgs[1].toLowerCase()] = true;
-					} else {
-						enabledAPIs[textArgs[1].toLowerCase()] = false;
-					}
-					channel.send("API '" + textArgs[1].toLowerCase() + "' is now set to '" + textArgs[2].toLowerCase() + "'.");
-				}
-			} else {
-				channel.send("Error: you are not an administrator!");
+				channel.send( updateGit() );
+				channel.send('Going down for restart now...');
+				process.exit(1);
 			}
-		} else {
-			channel.send("Error: not enough arguments");
-		}
-	}
-}, {
-	name: ['boop'],
-	desc: 'Boops a given target.',
-	func: function() {
-		if (textArgs.length < 2) {
-			channel.send(userName + " wants to boop someone, but didn't specify a target! They boop themselves.");
-		} else {
-			channel.send(userName + " gently touches " + text.substring(5, text.length + 1) + "'s nose. Boop!");
-		}
-	}
-}, {
-	name: ['botupdate'],
-	desc: 'Update my code!',
-	func: function() {
-		if (chatAdmins.indexOf(user.name) > -1) {
-			channel.send(updateGit());
-			channel.send('Going down for restart now...');
-			process.exit(1);
-		} else {
-			"Error: you are not an administrator!";
-		}
-	}
-}, {
-	name: ['cb', 'cleverbot'],
-	desc: 'Talk to me!',
-	func: function() {
-		if (enabledAPIs.cleverbot) {
-			if (textArgs.length < 2) {
-				channel.send("Error: no message given.");
-			} else {
+	},
+
+	cb: {
+		desc: 'Talk to me!',
+		func: function() {
+			if(textArgs.length < 2) channel.send("Error: no message given.");
+			else {
 				bot.create(function(err, session) {
 					console.log("Asking Cleverbot...");
 					bot.ask(text.substring(3, text.length + 1), function(err, response) {
@@ -286,13 +239,10 @@ var commandLibrary = [{
 					});
 				});
 			}
-		} else {
-			channel.send("Error: cleverbot API not enabled");
 		}
-	}
-}, {
-	name: ['e621', 'e6'],
-	desc: 'Displays an image with given tags from e621. `e6 <tags>`',
+	},
+
+	e621: { desc: 'Displays an image with given tags from e621. `e6 <tags>`',
 	func: function() {
 		if (channel.name !== 'nsfw') {
 			channel.send('Perhaps you are in the wrong channel?');
@@ -304,10 +254,9 @@ var commandLibrary = [{
 				e621(SEARCH, channel);
 			}
 		}
-	}
-}, {
-	name: ['derpi'],
-	desc: 'Displays an image with given tags from Derpibooru. `derpi <tags>`',
+	},
+
+	derpi: { desc: 'Displays an image with given tags from Derpibooru. `derpi <tags>`',
 	func: function() {
 		if (textArgs.length < 2) {
 			channel.send(userName + ' did not specify a search term.');
@@ -315,10 +264,9 @@ var commandLibrary = [{
 			var SEARCH = text.substring(6, text.length + 1);
 			derpi(SEARCH, channel, true);
 		}
-	}
-}, {
-	name: ['derpinsfw'],
-	desc: 'Displays a _naughty_ image with given tags from Derpibooru. `derpinsfw <tags>`',
+	},
+
+	derpinsfw: { desc: 'Displays a _naughty_ image with given tags from Derpibooru. `derpinsfw <tags>`',
 	func: function() {
 		if (channel.name !== 'nsfw') {
 			channel.send('Perhaps you are in the wrong channel?');
@@ -330,14 +278,13 @@ var commandLibrary = [{
 				derpi(SEARCH, channel, false);
 			}
 		}
-	}
-}, {
-	name: ['imagesearch'],
-	desc: 'Displays an image from Google Images with given search term. `imagesearch <query>`',
-	func: function() {
-		if (enabledAPIs.google) {
+	},
+
+	imagesearch: {
+		desc: 'Displays an image from Google Images with given search term. `imagesearch <query>`',
+		func: function() {
 			var SEARCH = text.substring(12, text.length + 1);
-			console.log("Searching Google Images for \"" + SEARCH + "\"");
+			console.log('Searching Google Images for "' + SEARCH + '"');
 			customsearch.cse.list({
 				cx: CX,
 				q: SEARCH,
@@ -353,13 +300,10 @@ var commandLibrary = [{
 					channel.send(resp.items[imgResult].link); // post to channel
 				}
 			});
-		} else {
-			channel.send("Error: google API not enabled");
 		}
-	}
-}, {
-	name: ['mlfw'],
-	desc: 'Displays an image from mylittlefacewhen with given tags. `mlfw <tags>`',
+	},
+
+	mlfw: { desc: 'Displays an image from mylittlefacewhen with given tags. `mlfw <tags>`',
 	func: function() {
 		if (textArgs.length < 2) {
 			channel.send(userName + ' did not specify a search term.');
@@ -367,29 +311,27 @@ var commandLibrary = [{
 			var SEARCH = text.substring(5, text.length + 1);
 			mlfw(SEARCH, channel);
 		}
-	}
-}, {
-	name: ['punch'],
-	desc: 'Punches a given target. `punch <target>`',
-	func: function() {
-		if (textArgs.length < 2) {
-			channel.send(userName + " did not specify a target. " + userName + " hurt themself in their confusion!");
-		} else {
-			channel.send(userName + " violently slugs " + text.substring(6, text.length + 1) + ".");
+	},
+
+	punch: {
+		desc: 'Punches a given target. `punch <target>`',
+		func: function() {
+			if (textArgs.length < 2) {
+				channel.send(userName + " did not specify a target. " + userName + " hurt themself in their confusion!");
+			} else {
+				channel.send(userName + " violently slugs " + text.substring(6, text.length + 1) + ".");
+			}
 		}
+	},
+
+	roulette: {
+		desc: 'Spin the wheel of fate!',
+		func: function() { channel.send('The bottle points to <@' + randomUser(channel).name + '>.'); },
 	}
-}, {
-	name: ['roulette'],
-	desc: 'Spin the wheel of fate!',
-	func: function() {
-		var randUser = "@" + randomUser(channel).name;
-		channel.send("The bottle points to <" + randUser + ">.");
-	}
-}, {
-	name: ['sc'],
-	desc: "Searches Soundcloud with a given query. `sc <query>`",
-	func: function() {
-		if (enabledAPIs.google) {
+
+	soundcloud: {
+		desc: "Searches Soundcloud with a given query. `sc <query>`",
+		func: function() {
 			var SEARCH = text.substring(3, text.length + 1);
 			console.log("Searching SoundCloud for \"" + SEARCH + "\"");
 			customsearch.cse.list({
@@ -407,45 +349,45 @@ var commandLibrary = [{
 				}
 			});
 		}
-	}
-}, {
-	name: ['xkcd'],
-	desc: 'Posts either a random xkcd comic, or the given numbered comic. `xkcd [number]`',
-	func: function() {
-		if (textArgs.length < 2) {
-			request("http://xkcd.com/info.0.json", function(error, response, body) {
-				var results = JSON.parse(body);
-				if (results.num != null && results.num != undefined) {
-					request("http://xkcd.com/" + randomRange(1, results.num + 1) + "/info.0.json", function(error, response, body) {
-						var results = JSON.parse(body);
-						if (results.img != undefined && results.img != null) {
-							channel.send(results.img);
-						} else {
-							channel.send("Error: comic does not exist with this number.");
-						}
-					});
-				} else {
-					channel.send("Unknown error");
-				}
-			});
-		} else if (isNaN(textArgs[1])) {
-			channel.send("Error: query is not a valid number.");
-		} else {
-			request("http://xkcd.com/" + textArgs[1] + "/info.0.json", function(error, response, body) {
-				var results = JSON.parse(body);
-				if (results.img != undefined && results.img != null) {
-					channel.send(results.img);
-				} else {
-					channel.send("Error: comic does not exist with this number.");
-				}
-			});
+	},
+
+	xkcd: {
+		desc: 'Posts either a random xkcd comic, or the given numbered comic. `xkcd [number]`',
+		func: function() {
+			if (textArgs.length < 2) {
+				request("http://xkcd.com/info.0.json", function(error, response, body) {
+					var results = JSON.parse(body);
+					if (results.num != null && results.num != undefined) {
+						request("http://xkcd.com/" + randomRange(1, results.num + 1) + "/info.0.json", function(error, response, body) {
+							var results = JSON.parse(body);
+							if (results.img != undefined && results.img != null) {
+								channel.send(results.img);
+							} else {
+								channel.send("Error: comic does not exist with this number.");
+							}
+						});
+					} else {
+						channel.send("Unknown error");
+					}
+				});
+			} else if (isNaN(textArgs[1])) {
+				channel.send("Error: query is not a valid number.");
+			} else {
+				request("http://xkcd.com/" + textArgs[1] + "/info.0.json", function(error, response, body) {
+					var results = JSON.parse(body);
+					if (results.img != undefined && results.img != null) {
+						channel.send(results.img);
+					} else {
+						channel.send("Error: comic does not exist with this number.");
+					}
+				});
+			}
 		}
-	}
-}, {
-	name: ['youtube', 'yt'],
-	desc: 'Displays a video from YouTube with given search parameters. `yt <query>`',
-	func: function() {
-		if (enabledAPIs.yt) {
+	},
+
+	youtube: {
+		desc: 'Displays a video from YouTube with given search parameters. `yt <query>`',
+		func: function() {
 			request('https://www.googleapis.com/youtube/v3/search?part=snippet&q=' + text.substring(3, text.length).replace(' ', '+') + '&key=' + API_KEY, function(error, response, body) {
 				var results = JSON.parse(body).items;
 				var chosenResult = 0;
@@ -454,11 +396,16 @@ var commandLibrary = [{
 				}
 				channel.send('https://www.youtube.com/watch?v=' + results[chosenResult].id.videoId);
 			});
-		} else {
-			channel.send("Error: youtube API not enabled");
 		}
 	}
-}];
+};
+
+var aliases: {
+	e6: 'e621',
+	ranimu: 'anime',
+	sc: 'soundcloud',
+	yt: 'youtube'
+}
 
 slack.on('message', function(message) {
 	var channel = slack.getChannelGroupOrDMByID(message.channel);
