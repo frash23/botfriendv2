@@ -509,26 +509,6 @@ var commandLibrary = [{
 		}
 	}
 }, {
-	name: ['exec'],
-	desc: 'Executes a command on the server. Admins only!',
-	func: function() {
-		if (textArgs.length < 2) {
-			channel.send("Error: not enough arguments.");
-		} else {
-			if (chatAdmins.indexOf(user.name) > -1) {
-				exec(text.substring(5, text.length + 1), function(err, out, code) {
-					if (err == 0) {
-						channel.send(out);
-					} else {
-						channel.send("ERROR:\n" + err);
-					}
-				});
-			} else {
-				channel.send("Error: you are not an administrator!");
-			}
-		}
-	}
-}, {
 	name: ['derpi'],
 	desc: 'Displays an image with given tags from Derpibooru. `derpi <tags>`',
 	func: function() {
@@ -552,22 +532,6 @@ var commandLibrary = [{
 				var SEARCH = text.substring(10, text.length + 1);
 				derpi(SEARCH, channel, false);
 			}
-		}
-	}
-}, {
-	name: ['honk'],
-	desc: 'honk it up!',
-	func: function() {
-		channel.send('https://www.youtube.com/watch?v=c3vONDqvayo');
-	}
-}, {
-	name: ['icebucket'],
-	desc: 'Dump ice on someone. `icebucket <target>`',
-	func: function() {
-		if (textArgs.length < 2) {
-			channel.send(userName + " did not specify a target. " + userName + " hurt themselves in their confusion!");
-		} else {
-			channel.send(userName + " dumps a bucket of cold ice over " + text.substring(10, text.length + 1) + ".");
 		}
 	}
 }, {
@@ -624,30 +588,6 @@ var commandLibrary = [{
 		var randUser = "@" + randomUser(channel).name;
 		channel.send("The bottle points to <" + randUser + ">.");
 	}
-}, {
-	name: ['search'],
-	desc: "Searches Google with a given query. `search <query>`",
-	func: function() {
-		if (enabledAPIs.google) {
-			var SEARCH = text.substring(7, text.length + 1);
-			console.log("Searching google for \"" + SEARCH + "\"");
-			customsearch.cse.list({
-				cx: CX,
-				q: SEARCH,
-				auth: API_KEY,
-			}, function(err, resp) {
-				if (err) {
-					console.log('An error occured', err);
-					return;
-				}
-				var imgResult = randomRange(0, 9);
-				if (resp.items && resp.items.length > 0) {
-					channel.send(resp.items[imgResult].link); // post to channel
-				}
-			});
-		}
-	}
-
 }, {
 	name: ['sc'],
 	desc: "Searches Soundcloud with a given query. `sc <query>`",
