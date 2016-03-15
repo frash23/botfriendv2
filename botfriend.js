@@ -41,8 +41,6 @@ bot.setNick(config.botname);
 
 var usedAnimeImgs = [];
 
-var fighters = [];
-
 // google keys
 const CX = keys.cx;
 const API_KEY = keys.api;
@@ -104,10 +102,6 @@ var randomUser = function(channel) {
 	return slack.getUserByID(members[selectedMember]);
 };
 
-var cooldownFunc = function(fighters, ff) {
-	fighters[ff].cooldown = false;
-}
-
 // gets image from derpibooru with given tags, posts to given channel - auto-appends "safe" or "explicit" tag based on argument
 var derpi = function(term, channel, sfw) {
 	if (sfw) {
@@ -159,24 +153,6 @@ var danbooru = function(term, channel) {
 			channel.send("http://danbooru.donmai.us" + imgJson[imgNum].file_url);
 		}
 	});
-}
-
-// Creates a humorous status message using names of group members and lines of text in statustext.json
-var generateStatus = function(channel) {
-	var statusType = randomRange(1, 3); // [min, max)
-
-	var usedName = "@" + randomUser(channel).name;
-	var finalStatus = "Error making status message.";
-
-	if (statusType === 1) { // postname text
-		var usedSText = statusText.postname[randomRange(0, statusText.postname.length - 1)];
-		finalStatus = usedName + usedSText;
-	} else { // prename text
-		var usedSText = statusText.prename[randomRange(0, statusText.prename.length - 1)];
-		finalStatus = usedSText + usedName + ".";
-	}
-
-	channel.send(finalStatus);
 }
 
 // returns random int within range
@@ -314,124 +290,6 @@ var commandLibrary = [{
 		}
 	}
 }, {
-	name: ['battle'],
-	desc: 'Battle system. Use `battle help` for in-depth explanation.',
-	func: function() {
-		if (textArgs.length < 2) {
-			channel.send("Error: no arguments given.");
-		} else {
-			if (textArgs[1] == 'enter') {
-				// Enter user into battle
-				if (textArgs.length < 3) {
-					fighters.push({
-						name: userName,
-						cooldown: false,
-						maxhp: 50,
-						hp: 50,
-						attacks: [{
-							name: "punch",
-							damage: 5,
-							timeout: 3,
-							message: "$ punches *!"
-						}, {
-							name: "kick",
-							damage: 10,
-							timeout: 5,
-							message: "$ kicks * in the groin!"
-						}]
-					});
-					channel.send("You enter the arena! Stats:\nHP: " + fighters[fighters.length - 1].hp + "/" + fighters[fighters.length - 1].maxhp);
-				} else {
-					var targetUser = "@" + slack.getUserByID(textArgs[2].replace("<@", "").replace(">", "")).name;
-					fighters.push({
-						name: targetUser,
-						cooldown: false,
-						maxhp: 50,
-						hp: 50,
-						attacks: [{
-							name: "punch",
-							damage: 5,
-							timeout: 3,
-							message: "$ punches *!"
-						}, {
-							name: "kick",
-							damage: 10,
-							timeout: 5,
-							message: "$ kicks * in the groin!"
-						}]
-					});
-					channel.send(targetUser + " enters the arena! Stats:\nHP: " + fighters[fighters.length - 1].hp + "/" + fighters[fighters.length - 1].maxhp);
-				}
-			} else if (textArgs[1] == 'attack') {
-				if (textArgs.length < 4) {
-					channel.send("Error: not enough arguments");
-				} else {
-
-					var userCheck = false;
-					for (var ff = 0; ff < fighters.length; ff++) {
-						if (ff != fighters.length) {
-							console.log("Start looking for users...");
-							if (userName == fighters[ff].name) {
-								userCheck = true;
-								console.log("User is in battle...");
-								var attackCheck = false;
-								for (var fff = 0; fff < fighters[ff].attacks.length; fff++) {
-									if (fff != fighters[ff].attacks.length) {
-										if (textArgs[2] == fighters[ff].attacks[fff].name) {
-											attackCheck = true;
-											console.log("Attack is valid...");
-											var targetCheck = false;
-											for (var ffff = 0; ffff < fighters.length; ffff++) {
-												if (ffff != fighters.length) {
-													if (slack.getUserByID(textArgs[3].replace("<@", "").replace(">", "")) !== undefined) {
-														var targetUser = "@" + slack.getUserByID(textArgs[3].replace("<@", "").replace(">", "")).name;
-														if (targetUser == fighters[ffff].name) {
-															targetCheck = true;
-															console.log("Target is valid...");
-															if (!fighters[ff].cooldown) {
-																fighters[ffff].hp -= fighters[ff].attacks[fff].damage;
-																channel.send(fighters[ff].attacks[fff].message.replace("$", fighters[ff].name).replace("*", fighters[ffff].name) + "\n" + fighters[ffff].name + " HP: " + fighters[ffff].hp + "/" + fighters[ffff].maxhp);
-																fighters[ff].cooldown = true;
-																setTimeout(cooldownFunc, fighters[ff].attacks[fff].timeout * 1000, fighters, ff);
-															} else {
-																channel.send("You are still on cooldown!");
-															}
-														} else {
-															if (ffff == fighters.length - 1 && !targetCheck) {
-																channel.send("Error: invalid target");
-															}
-														}
-													} else {
-														channel.send("Error: invalid target");
-													}
-												}
-											}
-										} else {
-											if (fff == fighters[ff].attacks.length - 1 && !attackCheck) {
-												channel.send("Error: invalid attack");
-											}
-										}
-									}
-								}
-							} else {
-								if (ff == fighters.length - 1 && !userCheck) {
-									console.log("User not in battle.");
-									channel.send("You aren't in battle!");
-								}
-							}
-						}
-					}
-				}
-			} else if (textArgs[1] == 'list') {
-				var finalString = "Current contestants:\n";
-				for (var pp = 0; pp < fighters.length; pp++) {
-					finalString += fighters[pp].name + " HP: " + fighters[pp].hp + "/" + fighters[pp].maxhp + "\n";
-				}
-				channel.send(finalString);
-			}
-		}
-	}
-}, {
 	name: ['botupdate'],
 	desc: 'Update my code!',
 	func: function() {
@@ -441,14 +299,6 @@ var commandLibrary = [{
 			process.exit(1);
 		} else {
 			"Error: you are not an administrator!";
-		}
-	}
-}, {
-	name: ['cam', 'campls'],
-	desc: 'Annoys Cameron.',
-	func: function() {
-		for (var i = 0; i <= 5; i++) {
-			channel.send("@techniponi pls");
 		}
 	}
 }, {
