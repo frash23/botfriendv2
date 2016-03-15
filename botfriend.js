@@ -180,15 +180,15 @@ var tumblrAnime = function(chan) {
 	});
 }
 
-// update bot code via git pull - this function will not restart the bot.
-var updateGit = function(channel) {
+/* Pull the bot's code from the GitHub repositroy (does not restart the bot) */
+function updateGit(channel) {
 	try {
 		exec('git pull');
 		return 'I\'ve updated my code.';
 	} catch(e) {
 		return 'Uh oh! Something went wrong with the update.';
 	}
-};
+}
 
 var commandLibrary = [{
 	name: ['bothelp'],
@@ -460,28 +460,26 @@ var commandLibrary = [{
 	}
 }];
 
-var textArgs;
-var channelError, channelName, errors, response, text, textError, ts, type, typeError, user, userName;
-// Message parsing
-setTimeout(function() {
-	process.exit(0);
-}, 1800000)
 slack.on('message', function(message) {
-	channel = slack.getChannelGroupOrDMByID(message.channel);
-	user = slack.getUserByID(message.user);
-	response = '';
-	type = message.type, ts = message.ts, text = message.text;
-	channelName = (channel != null ? channel.is_channel : void 0) ? '#' : '';
-	channelName = channelName + (channel ? channel.name : 'UNKNOWN_CHANNEL');
-	userName = (user != null ? user.name : void 0) != null ? "@" + user.name : "UNKNOWN_USER";
-	console.log("Received: " + type + " " + channelName + " " + userName + " " + ts + " \"" + text + "\"");
-	if (type === 'message' && (text != null) && (channel != null)) {
-		textArgs = text.split(' ');
+	var channel = slack.getChannelGroupOrDMByID(message.channel);
+	var user = slack.getUserByID(message.user);
+	var response = '';
+	var type = message.type, ts = message.ts, text = message.text;
+	
+	var channelName = (channel != null ? channel.is_channel : void 0) ? '#' : '';
+	var channelName = channelName + (channel ? channel.name : 'UNKNOWN_CHANNEL');
+	
+	var userName = (user != null ? user.name : void 0) != null ? "@" + user.name : "UNKNOWN_USER";
+	
+	console.log('Received: ' + type + ' ' + channelName + ' ' + userName + ' ' + ts + ' "' + text + '"');
+	
+	if(type === 'message' && text !== null && channel !== null) {
+		var textArgs = text.split(' ');
 		var cmd = textArgs[0].toLowerCase();
-		for (var wowLoopI = 0; wowLoopI < commandLibrary.length; wowLoopI++) {
-			for (var wowLoopJ = 0; wowLoopJ < commandLibrary[wowLoopI].name.length; wowLoopJ++) {
-				if (cmd == commandLibrary[wowLoopI].name[wowLoopJ]) {
-					commandLibrary[wowLoopI].func();
+		for(let i=0; i < commandLibrary.length; i++) {
+			for(let j=0; j < commandLibrary[i].name.length; j++) {
+				if(cmd === commandLibrary[i].name[j]) {
+					commandLibrary[i].func();
 					return 0;
 				}
 			}
@@ -501,4 +499,8 @@ slack.on('error', function(error) {
 	return console.error("Error: " + error);
 });
 
+/* Finally connect to the slack API */
 slack.login();
+
+/* Automatically turn off the bot every 30 minutes(???) */
+setTimeout(process.exit, 1800000);
