@@ -2,22 +2,24 @@
 
 // Please confirm these files are present before running!
 
-// Load json configs
+/*********************************************
+ * Load configuration files and dependencies *
+ *********************************************/
 var config = require('./config.json');
 var statusText = require('./statustext.json');
 var keys = require("./login.json");
 
-// Load npm modules
 var Slack = require('slack-client');
 var google = require('googleapis');
 var request = require('request');
 var imgur = require('imgur');
 var tumblrjs = require('tumblr.js');
 var cleverbot = require('cleverbot');
-
 var exec = require('child_process').exec;
 
-// Initialize runtime variables
+var chatAdmins = config.admins;
+var autoMark, autoReconnect, slack, token, channel;
+var customsearch = google.customsearch('v1');
 var enabledAPIs = {
 	google: config.apigoogle,
 	tumblr: config.apitumblr,
@@ -26,9 +28,14 @@ var enabledAPIs = {
 	yt: config.apiyt
 }
 
-var chatAdmins = config.admins;
-var autoMark, autoReconnect, slack, token, channel;
-var customsearch = google.customsearch('v1');
+var CX = keys.cx;		// Google API stuff
+var API_KEY = keys.api;	// Because who has time for self-explanantory variable names?
+
+
+
+/*******************
+ * Initialize APIs *
+ *******************/
 imgur.setClientId(keys.imgurid);
 
 var tumblr = tumblrjs.createClient({
@@ -41,19 +48,10 @@ var tumblr = tumblrjs.createClient({
 var bot = new cleverbot(keys.cbuser, keys.cbapi);
 bot.setNick(config.botname);
 
-var usedAnimeImgs = [];
-
-// google keys
-const CX = keys.cx;
-const API_KEY = keys.api;
-
-// Slack init
 token = keys.token;
 autoReconnect = true;
 autoMark = true;
 var slack = new Slack(token, autoReconnect, autoMark);
-
-// Execute on connect to Slack
 slack.on('open', function() {
 	
 	/* Get channels in team */
@@ -83,74 +81,62 @@ slack.on('open', function() {
 	return console.log('You have ' + unreads + ' unread ' + messages);
 });
 
-/*
- *   GENERAL USAGE AND COMMAND FUNCTIONS
- */
 
-// Gets random user from the memebrs of a given channel
-var randomUser = function(channel) {
+
+/*********************
+ * Utility functions *
+ *********************/
+
+/* Generate a random integer in a range */
+function randomInt(min, max) {
+	return Math.floor( Math.random() * (max - min + 1) + min);
+}
+
+/* Gets random user from the memebrs of a given channel */
+function randomUser(channel) {
 	var members = channel.members;
 	var selectedMember = randomRange(0, members.length - 1);
+
 	return slack.getUserByID(members[selectedMember]);
-};
-
-// gets image from derpibooru with given tags, posts to given channel - auto-appends "safe" or "explicit" tag based on argument
-var derpi = function(term, channel, sfw) {
-	if (sfw) {
-		var searchString = term.replace(' ', '+') + ',safe';
-	} else {
-		var searchString = term.replace(' ', '+') + ',explicit';
-	}
-	request('http://derpibooru.org/search.json?q=' + searchString + '&key=' + keys.derpi, function(err, res, body) {
-		var imgJson = JSON.parse(body);
-		var imgNum = randomRange(0, imgJson.search.length - 1);
-		if (imgJson.search.length == 0) {
-			channel.send("Uh oh! No images found.");
-		} else if (imgJson.search.length == 1) {
-			imgNum = 0;
-			channel.send('http:' + imgJson.search[imgNum].image);
-		} else {
-			channel.send('http:' + imgJson.search[imgNum].image);
-		}
-	});
 }
 
-// Gets image from e621 with given tags, posts to given channel
-var e621 = function(term, channel) {
-	request('http://e621.net/post/index.json?tags=' + term, function(err, res, body) {
-		var imgJson = JSON.parse(body);
-		var imgNum = randomRange(0, imgJson.length - 1);
-		if (imgJson.length == 0) {
-			channel.send("Uh oh! No images found.");
-		} else if (imgJson.length == 1) {
-			imgNum = 0;
-			channel.send(imgJson[imgNum].file_url);
-		} else {
-			channel.send(imgJson[imgNum].file_url);
+/* Gets a random entry from derpibooru with provided tag(s), aut-appends "sfw" or "explicit" tag
+ * depending on the value of (boolean)sfw */
+function derpi(term, channel, sfw) {
+	var apiUrl = 'http://derpibooru.org/search.json?q=' + searchString + '&key=' + keys.derpi;
+	
+	var searchString = term.replace(/ /g, '+');
+	searchString += sfw? ',safw' : ',explicit';
+	
+	var xhr = new XMLHttpRequest();
+	xhr.open('GET', apiUrl, false);
+	xhr.onload = function() {
+		var imgRes = JSON.parse(xhr.responseText).search;
+		var imgNum = randomInt(0, imgRes.length - 1);
+
+		if(imgRes.length < 1) channel.send("Uh oh! No images found.");
+		else {
+			var img = imgRes.length === 1? imgRes[0] : imgRes[imgNum];
+			channel.send('http:' + img.image);
 		}
-	});
+	};
 }
 
-// Gets image from danbooru with given tags, posts to given channel
-var danbooru = function(term, channel) {
-	request('http://danbooru.donmai.us/posts.json?tags=' + term, function(err, res, body) {
-		var imgJson = JSON.parse(body);
-		var imgNum = randomRange(0, imgJson.length - 1);
-		if (imgJson.length == 0) {
-			channel.send("Uh oh! No images found.");
-		} else if (imgJson.length == 1) {
-			imgNum = 0;
-			channel.send("http://danbooru.donmai.us" + imgJson[imgNum].file_url);
-		} else {
-			channel.send("http://danbooru.donmai.us" + imgJson[imgNum].file_url);
-		}
-	});
-}
+/* Gets image from e621 with provided tags */
+function e621(term, channel) {
+	var apiUrl = 'http://e621.net/post/index.json?tags=' + term;
+	var xhr = new XMLHttpRequest();
+	xhr.open('GET', apiUrl, false9;
+	xhr.onload = function() {
+		var imgRes = JSON.parse(body);
+		var imgNum = randomRange(0, imgRes.length - 1);
 
-// returns random int within range
-// [min, max)
-var randomRange = function(min, max) {
-	return Math.floor(Math.random() * (max - min + 1) + min);
+		if(imgRes.length < 1) channel.send("Uh oh! No images found.");
+		else {
+			var img = imgRes.length === 1? imgRes[0] : imgRes[imgNum];
+			channel.send(img.file_url);
+		}
+	};
 }
 
 // Gets image from MyLittleFaceWhen with given tags, posts to given channel
