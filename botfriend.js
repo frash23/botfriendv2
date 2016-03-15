@@ -7,7 +7,6 @@ var keys = require("./login.json");
 
 // Load npm modules
 var Slack = require('slack-client');
-require('shelljs/global');
 var google = require('googleapis');
 var request = require('request');
 var imgur = require('imgur');
