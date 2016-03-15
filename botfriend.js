@@ -53,42 +53,32 @@ var slack = new Slack(token, autoReconnect, autoMark);
 
 // Execute on connect to Slack
 slack.on('open', function() {
-	var channel, channels, group, groups, id, messages, unreads;
-	channels = [];
-	groups = [];
-	unreads = slack.getUnreadCount();
-	channels = (function() {
-		var ref, results;
-		ref = slack.channels;
-		results = [];
-		for (id in ref) {
-			channel = ref[id];
-			if (channel.is_member) {
-				results.push("#" + channel.name);
-				var link = '';
-			}
-		}
-		return results;
-	})();
-	groups = (function() {
-		var ref, results;
-		ref = slack.groups;
-		results = [];
-		for (id in ref) {
-			group = ref[id];
-			if (group.is_open && !group.is_archived) {
-				results.push(group.name);
-			}
-		}
-		return results;
-	})();
+	
+	/* Get channels in team */
+	var channels = [];
+	var allChan = slack.channels;
+	for(let id in allChan) {
+		var channel = allChan[id];
+		if(channel.is_member) channels.push("#" + channel.name);
+	}
 
-	// Status output on startup
-	console.log("Welcome to Slack. You are @" + slack.self.name + " of " + slack.team.name);
+	/* Get groups in team */
+	var groups = [];
+	var allGrp = slack.groups;
+	for(let id in allGrp) {
+		var group = allChan[id];
+		if(group.is_open && !group.is_archived) groups.push(group.name);
+	}
+
+	/* Status output on startup */
+	var unreads = slack.getUnreadCount();
+	var messages = unreads === 1 ? 'message' : 'messages';
+	
+	console.log('Welcome to Slack. You are @' + slack.self.name + ' of ' + slack.team.name);
 	console.log('You are in: ' + channels.join(', '));
 	console.log('As well as: ' + groups.join(', '));
-	messages = unreads === 1 ? 'message' : 'messages';
-	return console.log("You have " + unreads + " unread " + messages);
+	
+	return console.log('You have ' + unreads + ' unread ' + messages);
 });
 
 /*
