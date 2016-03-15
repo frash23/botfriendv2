@@ -38,15 +38,6 @@ var bot = new cleverbot(keys.cbuser, keys.cbapi);
 bot.setNick(config.botname);
 
 var usedAnimeImgs = [];
-var lennyfaces = [
-	'http://i.imgur.com/nu5c8bI.jpg',
-	'http://i.imgur.com/cWM4TnQ.jpg',
-	'http://i.imgur.com/TBptYTI.png',
-	'http://i.imgur.com/mY4dHo7.png',
-	'http://i.imgur.com/SK56o6J.jpg',
-	'http://i.imgur.com/MB8Tih4.gif',
-	'http://i.imgur.com/un7uu69.png'
-];
 
 var fighters = [];
 
@@ -315,18 +306,6 @@ var commandLibrary = [{
 		} else {
 			channel.send("Error: not enough arguments");
 		}
-	}
-}, {
-	name: ['ay', 'ayy', 'ayyy', 'ayyyy', 'ayyyyy'],
-	desc: 'ayyyyy',
-	func: function() {
-		channel.send('https://dl.dropboxusercontent.com/u/34812017/WebM/1419014839232.webm')
-	}
-}, {
-	name: ['ey', 'eyy', 'eyyy', 'eyyyy', 'eyyyyy'],
-	desc: 'eyyyyy',
-	func: function() {
-		channel.send('You\'re doing it wrong, Diana');
 	}
 }, {
 	name: ['boop'],
@@ -615,28 +594,6 @@ var commandLibrary = [{
 		}
 	}
 }, {
-	name: ['kek'],
-	desc: 'kekekekekek',
-	func: function() {
-		channel.send("https://www.youtube.com/watch?v=z8RkR4rd7dM");
-	}
-}, {
-	name: ['lenny'],
-	desc: 'ãƒ½à¼¼àºˆÙ„Íœàºˆà¼½ï¾‰',
-	func: function() {
-		if (enabledAPIs.imgur) {
-			postImage(channel, lennyfaces[randomRange(0, lennyfaces.length - 1)]);
-		} else {
-			channel.send("Error: imgur API not enabled");
-		}
-	}
-}, {
-	name: ['lol', 'rofl', 'lmao', 'roflmao', 'lul', 'ha'],
-	desc: 'lololol',
-	func: function() {
-		channel.send('roflmao lol lmao ololololol :D XDDDDD that\'s fucking hilarious');
-	}
-}, {
 	name: ['mlfw'],
 	desc: 'Displays an image from mylittlefacewhen with given tags. `mlfw <tags>`',
 	func: function() {
@@ -646,30 +603,6 @@ var commandLibrary = [{
 			var SEARCH = text.substring(5, text.length + 1);
 			mlfw(SEARCH, channel);
 		}
-	}
-}, {
-	name: ['noot'],
-	desc: 'NOOT NOOT',
-	func: function() {
-		channel.send("https://www.youtube.com/watch?v=8k97_ClPi50");
-	}
-}, {
-	name: ['penis'],
-	desc: 'penerswow',
-	func: function() {
-		channel.send('CAMERON HAS THE LONGER DONGER');
-	}
-}, {
-	name: ['pls', 'please'],
-	desc: 'pls',
-	func: function() {
-		channel.send('pls');
-	}
-}, {
-	name: ['poop'],
-	desc: '...',
-	func: function() {
-		channel.send('Ha ha. Poop. That is some real mature humor.');
 	}
 }, {
 	name: ['punch'],
@@ -734,28 +667,6 @@ var commandLibrary = [{
 				}
 			});
 		}
-	}
-}, {
-	name: ['status'],
-	desc: 'See what botriend thinks about the chat members.',
-	func: function() {
-		generateStatus(channel);
-	}
-}, {
-	name: ['unpunch'],
-	desc: 'Create a time paradox. Just for fun.',
-	func: function() {
-		if (textArgs.length < 2) {
-			channel.send(userName + " did not specify a target. " + userName + " is now a snail for the next seven and a half minutes.");
-		} else {
-			channel.send(userName + " turns back time to reverse his act of aggression against " + text.substring(8, text.length + 1) + ".");
-		}
-	}
-}, {
-	name: ['wow'],
-	desc: 'wao',
-	func: function() {
-		channel.send("https://www.youtube.com/watch?v=Wfl_AaYTdFQ");
 	}
 }, {
 	name: ['xkcd'],
