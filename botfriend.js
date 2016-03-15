@@ -13,6 +13,8 @@ var imgur = require('imgur');
 var tumblrjs = require('tumblr.js');
 var cleverbot = require('cleverbot');
 
+var exec = require('child_process').exec;
+
 // Initialize runtime variables
 var enabledAPIs = {
 	google: config.apigoogle,
@@ -242,10 +244,11 @@ var tumblrAnime = function(chan) {
 
 // update bot code via git pull - this function will not restart the bot.
 var updateGit = function(channel) {
-	if (exec('git pull').code !== 0) {
-		return 'Uh oh! Something went wrong with the update.';
-	} else {
+	try {
+		exec('git pull');
 		return 'I\'ve updated my code.';
+	} catch(e) {
+		return 'Uh oh! Something went wrong with the update.';
 	}
 };
 
