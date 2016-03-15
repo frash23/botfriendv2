@@ -158,17 +158,6 @@ var mlfw = function(term, channel) {
 	};
 };
 
-// posts given image URL to imgur and links in given channel
-var postImage = function(channel, img) {
-	imgur.uploadUrl(img)
-		.then(function(json) {
-			channel.send(json.data.link);
-		})
-		.catch(function(err) {
-			channel.send(err.message);
-		});
-};
-
 // Picks random image from tumblr dashboard, posts to given channel.
 // If you're wondering why it says "anime" everywhere, I give you a hamburger.
 var tumblrAnime = function(chan) {
