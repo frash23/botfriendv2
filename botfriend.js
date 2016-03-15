@@ -300,21 +300,6 @@ var commandLibrary = [{
 		}
 	}
 }, {
-	name: ['dan'],
-	desc: 'Display an image with given tags from Danbooru. `dan <tags>`',
-	func: function() {
-		if (channel.name !== 'nsfw') {
-			channel.send('Perhaps you are in the wrong channel?');
-		} else {
-			if (textArgs.length < 2) {
-				channel.send(userName + ' did not specify a search term.');
-			} else {
-				var SEARCH = text.substring(4, text.length + 1);
-				danbooru(SEARCH, channel);
-			}
-		}
-	}
-}, {
 	name: ['e621', 'e6'],
 	desc: 'Displays an image with given tags from e621. `e6 <tags>`',
 	func: function() {
