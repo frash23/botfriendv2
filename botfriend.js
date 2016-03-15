@@ -227,7 +227,7 @@ var tumblrAnime = function(chan) {
 		if (usedAnimeImgs.length == 25) {
 			usedAnimeImgs = [];
 		}
-		while (usedAnimeImgs.contains(imgs[imgNum])) {
+		while ( usedAnimeImgs.indexof(imgs[imgNum]) > -1 ) {
 			imgNum = randomRange(0, imgs.length - 1);
 		}
 		usedAnimeImgs.push(imgs[imgNum]);
