@@ -106,7 +106,7 @@ function derpi(term, channel, sfw) {
 	var apiUrl = 'http://derpibooru.org/search.json?q=' + searchString + '&key=' + keys.derpi;
 	
 	var searchString = term.replace(/ /g, '+');
-	searchString += sfw? ',safw' : ',explicit';
+	searchString += sfw? ',sfw' : ',explicit';
 	
 	var xhr = new XMLHttpRequest();
 	xhr.open('GET', apiUrl, false);
@@ -114,12 +114,13 @@ function derpi(term, channel, sfw) {
 		var imgRes = JSON.parse(xhr.responseText).search;
 		var imgNum = randomInt(0, imgRes.length - 1);
 
-		if(imgRes.length < 1) channel.send("Uh oh! No images found.");
+		if(imgRes.length < 1) channel.send('Uh oh! No images found.');
 		else {
 			var img = imgRes.length === 1? imgRes[0] : imgRes[imgNum];
 			channel.send('http:' + img.image);
 		}
 	};
+	xhr.send(null);
 }
 
 /* Gets image from e621 with provided tags */
@@ -131,29 +132,30 @@ function e621(term, channel) {
 		var imgRes = JSON.parse(body);
 		var imgNum = randomRange(0, imgRes.length - 1);
 
-		if(imgRes.length < 1) channel.send("Uh oh! No images found.");
+		if(imgRes.length < 1) channel.send('Uh oh! No images found.');
 		else {
 			var img = imgRes.length === 1? imgRes[0] : imgRes[imgNum];
 			channel.send(img.file_url);
 		}
 	};
+	xhr.send(null);
 }
 
-// Gets image from MyLittleFaceWhen with given tags, posts to given channel
+/* Gets image from MyLittleFaceWhen with provided tags */
 var mlfw = function(term, channel) {
-	var qterm = "\"" + term + "\"";
-	request('http://mylittlefacewhen.com/api/v2/face/?search=[' + qterm + ']&limit=10&format=json', function(error, response, body) {
-		var imgJson = JSON.parse(body);
-		var faceNum = randomRange(0, imgJson.meta.limit - 1);
-		if (imgJson.meta.total_count == 0) {
-			channel.send("Uh oh! No images found.");
-		} else if (imgJson.meta.total_count == 1) {
-			faceNum = 0;
-			channel.send('http://mylittlefacewhen.com' + imgJson.objects[faceNum].image);
-		} else {
-			channel.send('http://mylittlefacewhen.com' + imgJson.objects[faceNum].image);
+	var apiUrl = 'http://mylittlefacewhen.com/api/v2/face/?search=["' + term + '"]&limit=10&format=json';
+	var xhr = new XMLHttpRequest();
+	xhr.open('GET', apiUrl, false);
+	xhr.onload = function() {
+		var imgRes = JSON.parse(body);
+		var faceNum = randomRange(0, imgRes.meta.limit - 1);
+
+		if(imgRes.meta.total_count < 1) channel.send('Uh oh! No images found.');
+		else {
+			var face = imgRes.meta.total_count === 1? imgRes.objects[0] : imgRes.objects[faceNum];
+			channel.send('http://mylittlefacewhen.com' + face.image);
 		}
-	});
+	};
 };
 
 // posts given image URL to imgur and links in given channel
