@@ -97,13 +97,6 @@ slack.on('open', function() {
  *   GENERAL USAGE AND COMMAND FUNCTIONS
  */
 
-Array.prototype.contains = function(k) {
-	for (p in this) {
-		if (this[p] === k) return true;
-		return false;
-	}
-}
-
 // Gets random user from the memebrs of a given channel
 var randomUser = function(channel) {
 	var members = channel.members;
