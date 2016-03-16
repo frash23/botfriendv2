@@ -187,7 +187,7 @@ var commandLibrary = {
 
 	bothelp: {
 		desc: 'Displays all commands',
-		func: function() {
+		func: function(chan, args) {
 			var help = '\n=-=-~-=-=-~-=-=\n';
 			for(let key in commands) help += key + ' - ' + commands[key].desc + '\n';
 			help += '=-=-~-=-=-~-=-=';
@@ -197,7 +197,7 @@ var commandLibrary = {
 
 	anime: {
 		desc: 'Displays cute anime girls',
-		func: function() {
+		func: function(chan, args) {
 			if( config.work_channels.indexOf(channel.name) < 1 ) {
 				if (randomRange(0, 100) === 42) channel.send('jacob go outside or something');
 				else tumblrAnime(channel);
@@ -207,7 +207,7 @@ var commandLibrary = {
 
 	boop: {
 		desc: 'Boops a given target.',
-		func: function() {
+		func: function(chan, args) {
 			if(textArgs.length < 2) {
 				channel.send(userName + ' wants to boop someone, but didn\'t specify a target! They boop themselves.');
 			} else {
@@ -218,7 +218,7 @@ var commandLibrary = {
 
 	botupdate: {
 		desc: 'Update my code!',
-		func: function() {
+		func: function(chan, args) {
 			if (chatAdmins.indexOf(user.name) > -1) {
 				channel.send( updateGit() );
 				channel.send('Going down for restart now...');
@@ -228,11 +228,10 @@ var commandLibrary = {
 
 	cb: {
 		desc: 'Talk to me!',
-		func: function() {
+		func: function(chan, args) {
 			if(textArgs.length < 2) channel.send("Error: no message given.");
 			else {
 				bot.create(function(err, session) {
-					console.log("Asking Cleverbot...");
 					bot.ask(text.substring(3, text.length + 1), function(err, response) {
 						console.log("Received response:\n" + response);
 						channel.send(response);
@@ -242,22 +241,23 @@ var commandLibrary = {
 		}
 	},
 
-	e621: { desc: 'Displays an image with given tags from e621. `e6 <tags>`',
-	func: function() {
-		if (channel.name !== 'nsfw') {
-			channel.send('Perhaps you are in the wrong channel?');
-		} else {
-			if (textArgs.length < 2) {
-				channel.send(userName + ' did not specify a search term.');
-			} else {
-				var SEARCH = text.substring(3, text.length + 1);
-				e621(SEARCH, channel);
+	e621: {
+		desc: 'Displays an image with given tags from e621. `e6 <tags>`',
+		func: function(chan, args) {
+			if(channel.name !== 'nsfw') channel.send('Perhaps you are in the wrong channel?');
+			else {
+				if(textArgs.length < 2) {
+					channel.send(userName + ' did not specify a search term.');
+				} else {
+					var SEARCH = text.substring(3, text.length + 1);
+					e621(SEARCH, channel);
+				}
 			}
 		}
 	},
 
 	derpi: { desc: 'Displays an image with given tags from Derpibooru. `derpi <tags>`',
-	func: function() {
+	func: function(chan, args) {
 		if (textArgs.length < 2) {
 			channel.send(userName + ' did not specify a search term.');
 		} else {
@@ -267,7 +267,7 @@ var commandLibrary = {
 	},
 
 	derpinsfw: { desc: 'Displays a _naughty_ image with given tags from Derpibooru. `derpinsfw <tags>`',
-	func: function() {
+	func: function(chan, args) {
 		if (channel.name !== 'nsfw') {
 			channel.send('Perhaps you are in the wrong channel?');
 		} else {
@@ -282,7 +282,7 @@ var commandLibrary = {
 
 	imagesearch: {
 		desc: 'Displays an image from Google Images with given search term. `imagesearch <query>`',
-		func: function() {
+		func: function(chan, args) {
 			var SEARCH = text.substring(12, text.length + 1);
 			console.log('Searching Google Images for "' + SEARCH + '"');
 			customsearch.cse.list({
@@ -304,7 +304,7 @@ var commandLibrary = {
 	},
 
 	mlfw: { desc: 'Displays an image from mylittlefacewhen with given tags. `mlfw <tags>`',
-	func: function() {
+	func: function(chan, args) {
 		if (textArgs.length < 2) {
 			channel.send(userName + ' did not specify a search term.');
 		} else {
@@ -315,7 +315,7 @@ var commandLibrary = {
 
 	punch: {
 		desc: 'Punches a given target. `punch <target>`',
-		func: function() {
+		func: function(chan, args) {
 			if (textArgs.length < 2) {
 				channel.send(userName + " did not specify a target. " + userName + " hurt themself in their confusion!");
 			} else {
@@ -326,12 +326,12 @@ var commandLibrary = {
 
 	roulette: {
 		desc: 'Spin the wheel of fate!',
-		func: function() { channel.send('The bottle points to <@' + randomUser(channel).name + '>.'); },
+		func: function(chan, args) { channel.send('The bottle points to <@' + randomUser(channel).name + '>.'); },
 	}
 
 	soundcloud: {
 		desc: "Searches Soundcloud with a given query. `sc <query>`",
-		func: function() {
+		func: function(chan, args) {
 			var SEARCH = text.substring(3, text.length + 1);
 			console.log("Searching SoundCloud for \"" + SEARCH + "\"");
 			customsearch.cse.list({
@@ -353,7 +353,7 @@ var commandLibrary = {
 
 	xkcd: {
 		desc: 'Posts either a random xkcd comic, or the given numbered comic. `xkcd [number]`',
-		func: function() {
+		func: function(chan, args) {
 			if (textArgs.length < 2) {
 				request("http://xkcd.com/info.0.json", function(error, response, body) {
 					var results = JSON.parse(body);
@@ -387,7 +387,7 @@ var commandLibrary = {
 
 	youtube: {
 		desc: 'Displays a video from YouTube with given search parameters. `yt <query>`',
-		func: function() {
+		func: function(chan, args) {
 			request('https://www.googleapis.com/youtube/v3/search?part=snippet&q=' + text.substring(3, text.length).replace(' ', '+') + '&key=' + API_KEY, function(error, response, body) {
 				var results = JSON.parse(body).items;
 				var chosenResult = 0;
