@@ -9,9 +9,10 @@ var config = require('./config.json');
 var statusText = require('./statustext.json');
 var keys = require("./login.json");
 
+var http = require('http');
+var https = require('https');
 var Slack = require('slack-client');
 var google = require('googleapis');
-var request = require('request');
 var imgur = require('imgur');
 var tumblrjs = require('tumblr.js');
 var cleverbot = require('cleverbot');
@@ -93,6 +94,25 @@ function randomUser(channel) {
 	return slack.getUserByID(members[selectedMember]);
 }
 
+/* send an HTTP(s) */
+function httpGET(url, callback) {
+	var protocol = url.match(/https{0,1}:\/\//i);
+	var request = protocol === 'http://'? http : protocol === 'https://'? https : null;
+	if(!request) { throw 'Invalid URL "' + url + '"; }
+
+	var parts = url.replace(/(https{0,1}:\/\/)/i, '');
+	var host = parts.split('/')[0];
+	var pathIndex = parts.indexOf('/');
+	var path = pathIndex < 1? '/' : parts.substr(pathIndex, parts.length - pathIndex);
+
+	var data = '';
+	var req = request({ host: host, path: path }, res=> {
+		res.on( 'data', chunk=> data += chunk );
+		res.on( 'end', ()=> callback(data) );
+	});
+	req.end();
+}
+
 /* Gets a random entry from derpibooru with provided tag(s), aut-appends "sfw" or "explicit" tag
  * depending on the value of (boolean)sfw */
 function derpi(term, channel, sfw) {
@@ -101,9 +121,7 @@ function derpi(term, channel, sfw) {
 	var searchString = term.replace(/ /g, '+');
 	searchString += sfw? ',sfw' : ',explicit';
 	
-	var xhr = new XMLHttpRequest();
-	xhr.open('GET', apiUrl, false);
-	xhr.onload = function() {
+	httpGET(apiUrl, function() {
 		var imgRes = JSON.parse(xhr.responseText).search;
 		var imgNum = randomInt(0, imgRes.length - 1);
 
@@ -112,16 +130,13 @@ function derpi(term, channel, sfw) {
 			var img = imgRes.length === 1? imgRes[0] : imgRes[imgNum];
 			channel.send('http:' + img.image);
 		}
-	};
-	xhr.send(null);
+	});
 }
 
 /* Gets image from e621 with provided tags */
 function e621(term, channel) {
 	var apiUrl = 'http://e621.net/post/index.json?tags=' + term;
-	var xhr = new XMLHttpRequest();
-	xhr.open('GET', apiUrl, false9;
-	xhr.onload = function() {
+	httpGet(apiUrl, function() {
 		var imgRes = JSON.parse(body);
 		var imgNum = randomRange(0, imgRes.length - 1);
 
@@ -130,16 +145,13 @@ function e621(term, channel) {
 			var img = imgRes.length === 1? imgRes[0] : imgRes[imgNum];
 			channel.send(img.file_url);
 		}
-	};
-	xhr.send(null);
+	});
 }
 
 /* Gets image from MyLittleFaceWhen with provided tags */
 var mlfw = function(term, channel) {
 	var apiUrl = 'http://mylittlefacewhen.com/api/v2/face/?search=["' + term + '"]&limit=10&format=json';
-	var xhr = new XMLHttpRequest();
-	xhr.open('GET', apiUrl, false);
-	xhr.onload = function() {
+	httpGET(apiUrl, function() {
 		var imgRes = JSON.parse(body);
 		var faceNum = randomRange(0, imgRes.meta.limit - 1);
 
@@ -148,7 +160,7 @@ var mlfw = function(term, channel) {
 			var face = imgRes.meta.total_count === 1? imgRes.objects[0] : imgRes.objects[faceNum];
 			channel.send('http://mylittlefacewhen.com' + face.image);
 		}
-	};
+	});
 };
 
 // Picks random image from tumblr dashboard, posts to given channel.
@@ -226,7 +238,7 @@ var commandLibrary = {
 			}
 	},
 
-	cb: {
+cb: {
 		desc: 'Talk to me!',
 		func: function(chan, args) {
 			if(textArgs.length < 2) channel.send("Error: no message given.");
@@ -256,26 +268,30 @@ var commandLibrary = {
 		}
 	},
 
-	derpi: { desc: 'Displays an image with given tags from Derpibooru. `derpi <tags>`',
-	func: function(chan, args) {
-		if (textArgs.length < 2) {
-			channel.send(userName + ' did not specify a search term.');
-		} else {
-			var SEARCH = text.substring(6, text.length + 1);
-			derpi(SEARCH, channel, true);
-		}
-	},
-
-	derpinsfw: { desc: 'Displays a _naughty_ image with given tags from Derpibooru. `derpinsfw <tags>`',
-	func: function(chan, args) {
-		if (channel.name !== 'nsfw') {
-			channel.send('Perhaps you are in the wrong channel?');
-		} else {
+	derpi: {
+		desc: 'Displays an image with given tags from Derpibooru. `derpi <tags>`',
+		func: function(chan, args) {
 			if (textArgs.length < 2) {
 				channel.send(userName + ' did not specify a search term.');
 			} else {
-				var SEARCH = text.substring(10, text.length + 1);
-				derpi(SEARCH, channel, false);
+				var SEARCH = text.substring(6, text.length + 1);
+				derpi(SEARCH, channel, true);
+			}
+		}
+	},
+
+	derpinsfw: {
+		desc: 'Displays a _naughty_ image with given tags from Derpibooru. `derpinsfw <tags>`',
+		func: function(chan, args) {
+			if (channel.name !== 'nsfw') {
+				channel.send('Perhaps you are in the wrong channel?');
+			} else {
+				if (textArgs.length < 2) {
+					channel.send(userName + ' did not specify a search term.');
+				} else {
+					var SEARCH = text.substring(10, text.length + 1);
+					derpi(SEARCH, channel, false);
+				}
 			}
 		}
 	},
@@ -303,13 +319,15 @@ var commandLibrary = {
 		}
 	},
 
-	mlfw: { desc: 'Displays an image from mylittlefacewhen with given tags. `mlfw <tags>`',
-	func: function(chan, args) {
-		if (textArgs.length < 2) {
-			channel.send(userName + ' did not specify a search term.');
-		} else {
-			var SEARCH = text.substring(5, text.length + 1);
-			mlfw(SEARCH, channel);
+	mlfw: {
+		desc: 'Displays an image from mylittlefacewhen with given tags. `mlfw <tags>`',
+		func: function(chan, args) {
+			if (textArgs.length < 2) {
+				channel.send(userName + ' did not specify a search term.');
+			} else {
+				var SEARCH = text.substring(5, text.length + 1);
+				mlfw(SEARCH, channel);
+			}
 		}
 	},
 
